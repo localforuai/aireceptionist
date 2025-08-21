@@ -17,7 +17,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
           <div className="flex-1">
             <h4 className="text-sm font-medium text-blue-900 mb-1">Demo Mode Active</h4>
             <p className="text-sm text-blue-700 mb-3">
-              You're currently viewing demo data. To connect to your real Vapi account, you'll need to configure your API credentials.
+              You're currently viewing demo data. Click "Switch to Live Data" to connect to your real Vapi account.
             </p>
             <div className="flex flex-col sm:flex-row gap-2">
               <button
@@ -33,7 +33,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
               </button>
               {!hasApiKey && (
                 <span className="text-xs text-blue-600 self-center">
-                  (API key required)
+                  (API key required - check your .env file)
                 </span>
               )}
             </div>
@@ -52,7 +52,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
         <div className="flex-1">
           <h4 className="text-sm font-medium text-green-900 mb-1">Live Data Connected</h4>
           <p className="text-sm text-green-700 mb-3">
-            Dashboard is now displaying real-time data from your Vapi account.
+            Dashboard is now displaying live data from your Vapi account (API Key: {import.meta.env.VITE_VAPI_API_KEY?.substring(0, 8)}...).
           </p>
           <button
             onClick={onToggleDataSource}

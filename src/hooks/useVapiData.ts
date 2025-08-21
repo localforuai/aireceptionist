@@ -116,22 +116,49 @@ export const useVapiData = (userId: string | undefined) => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        setError(null);
         
         let calls: CallData[] = [];
         
         if (useRealData) {
           try {
+            console.log('Fetching real data from Vapi API...');
             // Fetch real data from Vapi API
             calls = await vapiApi.getCalls({
-              limit: 100,
+              limit: 50,
               startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // Last 30 days
             });
+            console.log('Successfully fetched calls from Vapi:', calls.length);
+            
+            // If no calls returned, show a message but don't fall back to mock data
+            if (calls.length === 0) {
+              console.log('No calls found in Vapi account');
+              setCallData([]);
+              setMetrics({
+                totalCallMinutes: 0,
+                totalCalls: 0,
+                averageCallDuration: 0,
+                callSuccessRate: 0,
+                totalCost: 0
+              });
+              setChartData({
+                endReasons: [],
+                assistantDurations: [],
+                successDistribution: [],
+                dailyCallVolume: []
+              });
+              setLoading(false);
+              return;
+            }
           } catch (apiError) {
-            console.warn('Failed to fetch from Vapi API, falling back to mock data:', apiError);
-            calls = generateMockData();
+            console.error('Failed to fetch from Vapi API:', apiError);
+            setError(`Failed to connect to Vapi API: ${apiError instanceof Error ? apiError.message : 'Unknown error'}`);
+            setLoading(false);
+            return;
           }
         } else {
           // Use mock data for demonstration
+          console.log('Using mock data for demonstration');
           await new Promise(resolve => setTimeout(resolve, 1500));
           calls = generateMockData();
         }
@@ -142,9 +169,9 @@ export const useVapiData = (userId: string | undefined) => {
         setCallData(calls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
-        setError(null);
       } catch (err) {
-        setError('Failed to fetch call data');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to fetch call data';
+        setError(errorMessage);
         console.error('Error fetching Vapi data:', err);
       } finally {
         setLoading(false);
