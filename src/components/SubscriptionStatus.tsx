@@ -36,7 +36,14 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ userId }
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
         <div className="flex items-center">
           <ExclamationTriangleIcon className="h-5 w-5 text-gray-600 mr-2" />
-          <span className="text-gray-700 text-sm">No active subscription</span>
+          <div className="flex-1">
+            <span className="text-gray-700 text-sm">No active plan</span>
+            <p className="text-xs text-gray-500 mt-1">
+              <a href="/products" className="text-blue-600 hover:text-blue-700">
+                Browse available products
+              </a>
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -63,6 +70,8 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ userId }
     return subscription.subscription_status;
   };
 
+  const isPurchase = plan.mode === 'payment';
+
   return (
     <div className={`border rounded-lg p-4 ${getStatusColor()}`}>
       <div className="flex items-center justify-between">
@@ -70,10 +79,12 @@ export const SubscriptionStatus: React.FC<SubscriptionStatusProps> = ({ userId }
           {getStatusIcon()}
           <div className="ml-3">
             <h3 className="text-sm font-medium">{plan.name}</h3>
-            <p className="text-xs opacity-75">Status: {getStatusText()}</p>
+            <p className="text-xs opacity-75">
+              {isPurchase ? 'Purchased' : `Status: ${getStatusText()}`}
+            </p>
           </div>
         </div>
-        {subscription.current_period_end && (
+        {subscription.current_period_end && !isPurchase && (
           <div className="text-right">
             <p className="text-xs opacity-75">
               {subscription.cancel_at_period_end ? 'Expires' : 'Renews'} on{' '}

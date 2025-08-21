@@ -40,7 +40,9 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           {/* Subscription Status */}
           {user && (
             <div className="hidden sm:block">
-              <SubscriptionStatus userId={user.id} />
+              <div className="mr-4">
+                <SubscriptionStatus userId={user.id} />
+              </div>
             </div>
           )}
 

@@ -10,13 +10,13 @@ export interface StripeProduct {
 
 export const stripeProducts: StripeProduct[] = [
   {
-    id: 'prod_SG6ofw3zr7YDpT',
-    priceId: 'UKPOS01M00S-03',
-    name: 'POS01M00 POS System',
-    description: 'Complete Point of Sale system for your business',
-    mode: 'subscription',
+    id: 'prod_Rxl7U7v7kB21e9',
+    priceId: 'AUTEST003M00O-10',
+    name: 'TEST003M00 Test Product',
+    description: 'Test product for payment integration validation',
+    mode: 'payment',
     price: 0,
-    currency: 'gbp'
+    currency: 'aud'
   }
 ];
 

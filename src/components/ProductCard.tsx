@@ -32,11 +32,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   };
 
   const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-GB', {
+    const locale = currency === 'aud' ? 'en-AU' : 'en-GB';
+    return new Intl.NumberFormat(locale, {
       style: 'currency',
       currency: currency.toUpperCase(),
     }).format(price);
   };
+
+  const isFreeTrial = product.price === 0;
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
@@ -50,17 +53,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
           <span className="text-2xl font-bold text-gray-900">
-            {formatPrice(product.price, product.currency)}
+            {isFreeTrial ? 'Free' : formatPrice(product.price, product.currency)}
           </span>
           <span className="text-sm text-gray-500">
-            {product.mode === 'subscription' ? 'per month' : 'one-time'}
+            {isFreeTrial ? 'trial' : product.mode === 'subscription' ? 'per month' : 'one-time'}
           </span>
         </div>
 
         <button
           onClick={handlePurchase}
           disabled={loading}
-          className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className={`inline-flex items-center px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+            isFreeTrial 
+              ? 'bg-green-600 hover:bg-green-700 text-white' 
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
         >
           {loading ? (
             <div className="flex items-center">
@@ -70,7 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           ) : (
             <>
               <CreditCardIcon className="w-4 h-4 mr-2" />
-              {product.mode === 'subscription' ? 'Subscribe' : 'Purchase'}
+              {isFreeTrial ? 'Start Free Trial' : product.mode === 'subscription' ? 'Subscribe' : 'Purchase'}
             </>
           )}
         </button>
