@@ -131,6 +131,7 @@ function transformVapiCall(vapiCall) {
 
 // Health check
 app.get('/health', (req, res) => {
+  console.log('Health check requested');
   res.json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
@@ -140,6 +141,7 @@ app.get('/health', (req, res) => {
 
 // Get calls with optional filtering
 app.get('/api/calls', async (req, res) => {
+  console.log('GET /api/calls requested with query:', req.query);
   try {
     const { assistantId, limit = 50, offset = 0, startDate, endDate } = req.query;
     
@@ -173,6 +175,7 @@ app.get('/api/calls', async (req, res) => {
 
 // Get specific call details
 app.get('/api/calls/:callId', async (req, res) => {
+  console.log('GET /api/calls/:callId requested for:', req.params.callId);
   try {
     const { callId } = req.params;
     const response = await makeVapiRequest(`/call/${callId}`);
@@ -193,6 +196,7 @@ app.get('/api/calls/:callId', async (req, res) => {
 
 // Get assistants
 app.get('/api/assistants', async (req, res) => {
+  console.log('GET /api/assistants requested');
   try {
     const response = await makeVapiRequest('/assistant');
     const assistants = Array.isArray(response) ? response : (response.data || []);
@@ -212,6 +216,7 @@ app.get('/api/assistants', async (req, res) => {
 
 // Test Vapi connection
 app.get('/api/test-connection', async (req, res) => {
+  console.log('GET /api/test-connection requested');
   try {
     await makeVapiRequest('/assistant');
     res.json({
@@ -236,11 +241,12 @@ app.use((error, req, res, next) => {
   });
 });
 
-// 404 handler
+// 404 handler - this should be last
 app.use((req, res) => {
+  console.log('404 - Endpoint not found:', req.method, req.path);
   res.status(404).json({
     success: false,
-    error: 'Endpoint not found'
+    error: `Endpoint not found: ${req.method} ${req.path}`
   });
 });
 
@@ -249,4 +255,10 @@ app.listen(PORT, () => {
   console.log(`✓ CORS enabled for: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
   console.log(`✓ Vapi API Base URL: ${VAPI_BASE_URL}`);
   console.log(`✓ Ready to serve live Vapi data`);
+  console.log('Available endpoints:');
+  console.log('  - GET /health');
+  console.log('  - GET /api/calls');
+  console.log('  - GET /api/calls/:id');
+  console.log('  - GET /api/assistants');
+  console.log('  - GET /api/test-connection');
 });
