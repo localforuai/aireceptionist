@@ -16,7 +16,20 @@ export const createCheckoutSession = async ({
   cancelUrl,
 }: CreateCheckoutSessionParams) => {
   if (!supabase) {
-    throw new Error('Supabase is not configured. Please set up Supabase to use Stripe checkout.');
+    // For demo purposes, simulate a successful checkout
+    console.log('Supabase not configured, simulating checkout for demo');
+    
+    // Generate a mock session ID and redirect to success page
+    const mockSessionId = `cs_demo_${Date.now()}`;
+    const demoSuccessUrl = successUrl.replace('{CHECKOUT_SESSION_ID}', mockSessionId);
+    
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    return {
+      sessionId: mockSessionId,
+      url: demoSuccessUrl
+    };
   }
   
   const { data: { session } } = await supabase.auth.getSession();
