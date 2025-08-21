@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CallData, DashboardMetrics, ChartData } from '../types';
-import { vapiApi } from '../services/vapiApi';
+import { backendApi } from '../services/backendApi';
 
 export const useVapiData = (userId: string | undefined) => {
   const [callData, setCallData] = useState<CallData[]>([]);
@@ -123,16 +123,22 @@ export const useVapiData = (userId: string | undefined) => {
         if (useRealData) {
           try {
             console.log('Fetching real data from Vapi API...');
-            // Fetch real data from Vapi API
-            calls = await vapiApi.getCalls({
+            // Test backend connection first
+            const isBackendHealthy = await backendApi.healthCheck();
+            if (!isBackendHealthy) {
+              throw new Error('Backend server is not running. Please start the backend server on port 3001.');
+            }
+            
+            // Fetch real data from backend API (which uses Vapi private key)
+            calls = await backendApi.getCalls({
               limit: 50,
               startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // Last 30 days
             });
-            console.log('Successfully fetched calls from Vapi:', calls.length);
+            console.log('Successfully fetched calls from backend:', calls.length);
             
             // If no calls returned, show a message but don't fall back to mock data
             if (calls.length === 0) {
-              console.log('No calls found in Vapi account');
+              console.log('No calls found in your Vapi account');
               setCallData([]);
               setMetrics({
                 totalCallMinutes: 0,
@@ -151,15 +157,15 @@ export const useVapiData = (userId: string | undefined) => {
               return;
             }
           } catch (apiError) {
-            console.error('Failed to fetch from Vapi API:', apiError);
+            console.error('Failed to fetch from backend API:', apiError);
             const errorMessage = apiError instanceof Error ? apiError.message : 'Unknown error';
             
-            if (errorMessage.includes('Authentication failed')) {
-              setError(errorMessage);
-            } else if (errorMessage.includes('Public API keys have limited access')) {
-              setError(errorMessage);
+            if (errorMessage.includes('Backend server is not running')) {
+              setError('Backend server is not running. Please start the backend server with: npm run dev:server');
+            } else if (errorMessage.includes('Unable to connect to backend server')) {
+              setError('Cannot connect to backend server. Make sure it\'s running on port 3001.');
             } else {
-              setError(`Failed to connect to Vapi API: ${errorMessage}`);
+              setError(`Backend API Error: ${errorMessage}`);
             }
             setLoading(false);
             return;
