@@ -45,7 +45,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
                 <a href="https://dashboard.vapi.ai" target="_blank" rel="noopener noreferrer" className="underline">
                   Vapi Dashboard
                 </a>
-                . Make sure to use the <strong>Public Key</strong>, not the Private Key.
+                . Look for the "Public API Keys" section and use the key labeled "Vapi Key".
               </p>
             </div>
           )}
@@ -63,7 +63,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
         <div className="flex-1">
           <h4 className="text-sm font-medium text-green-900 mb-1">Live Data Connected</h4>
           <p className="text-sm text-green-700 mb-3">
-            Dashboard is now displaying live data from your Vapi account.
+            Attempting to connect to your Vapi account with your public key.
           </p>
           <button
             onClick={onToggleDataSource}
@@ -73,6 +73,9 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
           </button>
           <div className="mt-2 text-xs text-green-600">
             Using API Key: {import.meta.env.VITE_VAPI_API_KEY?.substring(0, 8)}...
+          </div>
+          <div className="mt-2 text-xs text-green-600">
+            Note: Public keys may have limited access to certain endpoints for security reasons.
           </div>
         </div>
       </div>

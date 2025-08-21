@@ -1,49 +1,68 @@
 import { CallData } from '../types';
 
+// Note: Vapi's public API keys are designed for client-side SDK usage, not direct REST API calls
+// For a production dashboard, you would typically:
+// 1. Use Vapi's client SDK with the public key for real-time features
+// 2. Have your backend fetch call data using the private key
+// 3. Serve that data to your frontend through your own API
+
 const VAPI_BASE_URL = import.meta.env.VITE_VAPI_BASE_URL || 'https://api.vapi.ai';
-const VAPI_API_KEY = import.meta.env.VITE_VAPI_API_KEY;
+const VAPI_PUBLIC_KEY = import.meta.env.VITE_VAPI_API_KEY;
 
 class VapiApiService {
   private baseURL: string;
-  private apiKey: string;
+  private publicKey: string;
 
   constructor() {
     this.baseURL = VAPI_BASE_URL;
-    this.apiKey = VAPI_API_KEY;
+    this.publicKey = VAPI_PUBLIC_KEY;
     
-    if (!this.apiKey) {
+    if (!this.publicKey) {
       console.warn('VAPI_API_KEY not found in environment variables');
     }
   }
 
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
-    if (!this.apiKey) {
+    if (!this.publicKey) {
       throw new Error('Vapi API key is not configured');
     }
 
     const url = `${this.baseURL}${endpoint}`;
     console.log('Making Vapi API request to:', url);
     
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Authorization': `Bearer ${this.publicKey}`,
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
 
-    console.log('Vapi API response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Vapi API error response:', errorText);
-      throw new Error(`Vapi API error: ${response.status} ${response.statusText} - ${errorText}`);
+      console.log('Vapi API response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Vapi API error response:', errorText);
+        
+        // Handle specific error cases
+        if (response.status === 401) {
+          throw new Error('Authentication failed. This might be because:\n1. Public keys have limited access to certain endpoints\n2. This endpoint requires a private key (backend usage)\n3. The key permissions need to be configured in your Vapi dashboard');
+        }
+        
+        throw new Error(`Vapi API error: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('Vapi API response data:', data);
+      return data;
+    } catch (fetchError) {
+      if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
+        throw new Error('Network error: Unable to connect to Vapi API. Please check your internet connection.');
+      }
+      throw fetchError;
     }
-
-    const data = await response.json();
-    console.log('Vapi API response data:', data);
-    return data;
   }
 
   async getCalls(params?: {
@@ -53,22 +72,34 @@ class VapiApiService {
     startDate?: string;
     endDate?: string;
   }): Promise<CallData[]> {
-    const searchParams = new URLSearchParams();
-    
-    if (params?.assistantId) searchParams.append('assistantId', params.assistantId);
-    if (params?.limit) searchParams.append('limit', params.limit.toString());
-    if (params?.offset) searchParams.append('offset', params.offset.toString());
-    if (params?.startDate) searchParams.append('createdAtGt', params.startDate);
-    if (params?.endDate) searchParams.append('createdAtLt', params.endDate);
+    try {
+      const searchParams = new URLSearchParams();
+      
+      if (params?.assistantId) searchParams.append('assistantId', params.assistantId);
+      if (params?.limit) searchParams.append('limit', params.limit.toString());
+      if (params?.offset) searchParams.append('offset', params.offset.toString());
+      if (params?.startDate) searchParams.append('createdAtGt', params.startDate);
+      if (params?.endDate) searchParams.append('createdAtLt', params.endDate);
 
-    const endpoint = `/call${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
-    const response = await this.makeRequest(endpoint);
-    
-    // Handle both array response and paginated response
-    const calls = Array.isArray(response) ? response : (response.data || []);
-    console.log('Processing calls:', calls.length);
-    
-    return calls.map((call: any) => this.transformVapiCall(call));
+      const endpoint = `/call${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+      const response = await this.makeRequest(endpoint);
+      
+      // Handle both array response and paginated response
+      const calls = Array.isArray(response) ? response : (response.data || []);
+      console.log('Processing calls:', calls.length);
+      
+      return calls.map((call: any) => this.transformVapiCall(call));
+    } catch (error) {
+      console.error('Error fetching calls:', error);
+      
+      // For demo purposes, if the public key doesn't have access to call data,
+      // we'll throw a descriptive error instead of falling back to mock data
+      if (error instanceof Error && error.message.includes('Authentication failed')) {
+        throw new Error('Public API keys have limited access to call data. For full dashboard functionality, you would typically:\n\n1. Use your private key in a secure backend\n2. Create your own API endpoint that fetches call data\n3. Have your frontend call your backend instead of Vapi directly\n\nThis is a security best practice to keep your private key safe.');
+      }
+      
+      throw error;
+    }
   }
 
   async getCall(callId: string): Promise<CallData> {
@@ -77,8 +108,25 @@ class VapiApiService {
   }
 
   async getAssistants(): Promise<any[]> {
-    const response = await this.makeRequest('/assistant');
-    return Array.isArray(response) ? response : (response.data || []);
+    try {
+      const response = await this.makeRequest('/assistant');
+      return Array.isArray(response) ? response : (response.data || []);
+    } catch (error) {
+      console.error('Error fetching assistants:', error);
+      throw error;
+    }
+  }
+
+  // Test connection with a simple endpoint that public keys should have access to
+  async testConnection(): Promise<boolean> {
+    try {
+      // Try to fetch assistants as a connection test
+      await this.getAssistants();
+      return true;
+    } catch (error) {
+      console.error('Connection test failed:', error);
+      return false;
+    }
   }
 
   private transformVapiCall(vapiCall: any): CallData {
