@@ -45,7 +45,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
                 <a href="https://dashboard.vapi.ai" target="_blank" rel="noopener noreferrer" className="underline">
                   Vapi Dashboard
                 </a>
-                . Look for the "Public API Keys" section and use the key labeled "Vapi Key".
+                . Look for the "Public API Keys\" section and use the key labeled "Vapi Key".
               </p>
             </div>
           )}
