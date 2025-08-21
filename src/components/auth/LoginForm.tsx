@@ -16,16 +16,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setLocalError('');
 
     const success = await login(email, password);
     if (!success) {
-      setError(authError || 'Login failed. Please try again.');
+      setLocalError(error || 'Login failed. Please try again.');
     }
     setIsLoading(false);
   };
 
-  const [error, setError] = useState('');
+  const [localError, setLocalError] = useState('');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
@@ -41,9 +41,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             <p className="text-gray-600">Sign in to access your dashboard</p>
           </div>
 
-          {(error || authError) && (
+          {(localError || error) && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-              {error || authError}
+              {localError || error}
             </div>
           )}
 
