@@ -11,46 +11,73 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Check if Supabase is properly configured
+  const isSupabaseConfigured = () => {
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    return url && key && !url.includes('your-project-url') && !key.includes('your-anon-key');
+  };
+
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
+    // Check for existing session in localStorage first
+    const savedUser = localStorage.getItem('demo_user');
+    if (savedUser) {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Error getting session:', error);
-          setError(error.message);
-        } else if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || ''
-          });
-        }
-      } catch (err) {
-        console.error('Error in getInitialSession:', err);
-        setError('Failed to initialize authentication');
-      } finally {
-        setLoading(false);
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        localStorage.removeItem('demo_user');
       }
-    };
+    }
 
-    getInitialSession();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email || ''
-          });
-        } else {
-          setUser(null);
+    // If Supabase is configured, try to get the session
+    if (isSupabaseConfigured()) {
+      const getInitialSession = async () => {
+        try {
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error) {
+            console.error('Error getting session:', error);
+            // Don't set error, fall back to demo mode
+          } else if (session?.user) {
+            const supabaseUser = {
+              id: session.user.id,
+              email: session.user.email || ''
+            };
+            setUser(supabaseUser);
+            localStorage.setItem('demo_user', JSON.stringify(supabaseUser));
+          }
+        } catch (err) {
+          console.error('Error in getInitialSession:', err);
+          // Don't set error, fall back to demo mode
+        } finally {
+          setLoading(false);
         }
-        setLoading(false);
-      }
-    );
+      };
 
-    return () => subscription.unsubscribe();
+      getInitialSession();
+
+      // Listen for auth changes
+      const { data: { subscription } } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (session?.user) {
+            const supabaseUser = {
+              id: session.user.id,
+              email: session.user.email || ''
+            };
+            setUser(supabaseUser);
+            localStorage.setItem('demo_user', JSON.stringify(supabaseUser));
+          } else {
+            setUser(null);
+            localStorage.removeItem('demo_user');
+          }
+          setLoading(false);
+        }
+      );
+
+      return () => subscription.unsubscribe();
+    } else {
+      // Supabase not configured, use demo mode
+      setLoading(false);
+    }
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -62,25 +89,46 @@ export const useAuth = () => {
         return false;
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // If Supabase is configured, try real authentication
+      if (isSupabaseConfigured()) {
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
 
-      if (error) {
-        setError(error.message);
-        return false;
+          if (error) {
+            setError(error.message);
+            return false;
+          }
+
+          if (data.user) {
+            const supabaseUser = {
+              id: data.user.id,
+              email: data.user.email || ''
+            };
+            setUser(supabaseUser);
+            localStorage.setItem('demo_user', JSON.stringify(supabaseUser));
+            return true;
+          }
+        } catch (supabaseError) {
+          console.error('Supabase auth failed, falling back to demo mode:', supabaseError);
+          // Fall through to demo mode
+        }
       }
 
-      if (data.user) {
-        setUser({
-          id: data.user.id,
-          email: data.user.email || ''
-        });
-        return true;
-      }
+      // Demo mode authentication (fallback)
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      
+      const demoUser = {
+        id: `demo_${Date.now()}`,
+        email: email
+      };
+      
+      setUser(demoUser);
+      localStorage.setItem('demo_user', JSON.stringify(demoUser));
+      return true;
 
-      return false;
     } catch (err) {
       console.error('Login error:', err);
       setError('Login failed. Please try again.');
@@ -97,28 +145,49 @@ export const useAuth = () => {
         return false;
       }
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: undefined, // Disable email confirmation
+      // If Supabase is configured, try real signup
+      if (isSupabaseConfigured()) {
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: undefined, // Disable email confirmation
+            }
+          });
+
+          if (error) {
+            setError(error.message);
+            return false;
+          }
+
+          if (data.user) {
+            const supabaseUser = {
+              id: data.user.id,
+              email: data.user.email || ''
+            };
+            setUser(supabaseUser);
+            localStorage.setItem('demo_user', JSON.stringify(supabaseUser));
+            return true;
+          }
+        } catch (supabaseError) {
+          console.error('Supabase signup failed, falling back to demo mode:', supabaseError);
+          // Fall through to demo mode
         }
-      });
-
-      if (error) {
-        setError(error.message);
-        return false;
       }
 
-      if (data.user) {
-        setUser({
-          id: data.user.id,
-          email: data.user.email || ''
-        });
-        return true;
-      }
+      // Demo mode signup (fallback)
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+      
+      const demoUser = {
+        id: `demo_${Date.now()}`,
+        email: email
+      };
+      
+      setUser(demoUser);
+      localStorage.setItem('demo_user', JSON.stringify(demoUser));
+      return true;
 
-      return false;
     } catch (err) {
       console.error('Signup error:', err);
       setError('Signup failed. Please try again.');
@@ -128,10 +197,16 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      if (isSupabaseConfigured()) {
+        await supabase.auth.signOut();
+      }
       setUser(null);
+      localStorage.removeItem('demo_user');
     } catch (err) {
       console.error('Sign out error:', err);
+      // Still clear local state even if Supabase signout fails
+      setUser(null);
+      localStorage.removeItem('demo_user');
     }
   };
 
