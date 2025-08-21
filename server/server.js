@@ -22,6 +22,12 @@ if (!VAPI_PRIVATE_KEY) {
   process.exit(1);
 }
 
+console.log('Server starting with configuration:');
+console.log('- Port:', PORT);
+console.log('- CORS Origin:', process.env.CORS_ORIGIN || 'http://localhost:5173');
+console.log('- Vapi Base URL:', VAPI_BASE_URL);
+console.log('- Vapi Private Key:', VAPI_PRIVATE_KEY ? 'Configured ✓' : 'Missing ✗');
+
 // Helper function to make Vapi API requests
 async function makeVapiRequest(endpoint, options = {}) {
   const url = `${VAPI_BASE_URL}${endpoint}`;
@@ -125,7 +131,11 @@ function transformVapiCall(vapiCall) {
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'ok', 
+    timestamp: new Date().toISOString(),
+    vapiConfigured: !!VAPI_PRIVATE_KEY
+  });
 });
 
 // Get calls with optional filtering
@@ -235,7 +245,8 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Vapi backend server running on port ${PORT}`);
-  console.log(`CORS enabled for: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
-  console.log(`Vapi API Base URL: ${VAPI_BASE_URL}`);
+  console.log(`✓ Vapi backend server running on port ${PORT}`);
+  console.log(`✓ CORS enabled for: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`);
+  console.log(`✓ Vapi API Base URL: ${VAPI_BASE_URL}`);
+  console.log(`✓ Ready to serve live Vapi data`);
 });
