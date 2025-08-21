@@ -126,7 +126,7 @@ export const useVapiData = (userId: string | undefined) => {
             // Test backend connection first
             const isBackendHealthy = await backendApi.healthCheck();
             if (!isBackendHealthy) {
-              throw new Error('Backend server is not running. Please start the backend server on port 3001.');
+              throw new Error('Backend server is not running. Please start the backend server with: npm run dev:server');
             }
             
             // Fetch real data from backend API (which uses Vapi private key)
@@ -160,17 +160,15 @@ export const useVapiData = (userId: string | undefined) => {
             console.error('Failed to fetch from backend API:', apiError);
             const errorMessage = apiError instanceof Error ? apiError.message : 'Unknown error';
             
-            if (errorMessage.includes('Backend server is not running')) {
-              setError('Backend server is not running. Please start the backend server with: npm run dev:server');
-            } else if (errorMessage.includes('Unable to connect to backend server')) {
-              setError('Cannot connect to backend server. Make sure it\'s running on port 3001.');
-            } else {
-              setError(`Backend API Error: ${errorMessage}`);
-            }
-            setLoading(false);
-            return;
+            // Automatically fall back to demo mode when backend is not available
+            console.log('Backend not available, falling back to demo mode');
+            setUseRealData(false);
+            // Continue with demo data instead of showing error
           }
         } else {
+        }
+        
+        if (!useRealData) {
           // Use mock data for demonstration
           console.log('Using mock data for demonstration');
           await new Promise(resolve => setTimeout(resolve, 1500));
