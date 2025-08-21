@@ -22,8 +22,16 @@ export const useAuth = () => {
   const login = async (email: string, password: string): Promise<boolean> => {
     setError(null);
     
-    // Demo authentication - accept any email/password combination
-    if (email && password) {
+    try {
+      // Demo authentication - accept any email/password combination
+      if (!email || !password) {
+        setError('Please enter both email and password');
+        return false;
+      }
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const demoUser: User = {
         id: `user_${Date.now()}`,
         email: email
@@ -32,10 +40,10 @@ export const useAuth = () => {
       setUser(demoUser);
       localStorage.setItem('demo_user', JSON.stringify(demoUser));
       return true;
+    } catch (err) {
+      setError('Login failed. Please try again.');
+      return false;
     }
-    
-    setError('Please enter both email and password');
-    return false;
   };
 
   const signOut = async () => {

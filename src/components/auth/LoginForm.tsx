@@ -17,8 +17,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    
-    await login(email, password);
+    const success = await login(email, password);
+    if (!success) {
+      // Error handling is done in useAuth hook
+    }
     setIsLoading(false);
   };
 

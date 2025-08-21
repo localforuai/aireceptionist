@@ -34,7 +34,10 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
     }
 
     // Demo signup - automatically log in the user
-    await login(email, password);
+    const success = await login(email, password);
+    if (!success) {
+      // Error handling is done in useAuth hook
+    }
     setIsLoading(false);
   };
 
