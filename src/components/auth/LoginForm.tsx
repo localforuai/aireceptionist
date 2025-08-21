@@ -11,7 +11,8 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   const [password, setPassword] = useState('password');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login, error } = useAuth();
+  const { login, error: authError } = useAuth();
+  const [localError, setLocalError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,12 +21,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
 
     const success = await login(email, password);
     if (!success) {
-      setLocalError(error || 'Login failed. Please try again.');
+      setLocalError(authError || 'Login failed. Please try again.');
     }
     setIsLoading(false);
   };
-
-  const [localError, setLocalError] = useState('');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
@@ -41,9 +40,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             <p className="text-gray-600">Sign in to access your dashboard</p>
           </div>
 
-          {(localError || error) && (
+          {(localError || authError) && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-              {localError || error}
+              {localError || authError}
             </div>
           )}
 
@@ -94,7 +93,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
