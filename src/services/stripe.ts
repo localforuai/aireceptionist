@@ -15,6 +15,10 @@ export const createCheckoutSession = async ({
   successUrl,
   cancelUrl,
 }: CreateCheckoutSessionParams) => {
+  if (!supabase) {
+    throw new Error('Supabase is not configured. Please set up Supabase to use Stripe checkout.');
+  }
+  
   const { data: { session } } = await supabase.auth.getSession();
   
   if (!session?.access_token) {

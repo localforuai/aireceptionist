@@ -13,9 +13,7 @@ export const useAuth = () => {
 
   // Check if Supabase is properly configured
   const isSupabaseConfigured = () => {
-    const url = import.meta.env.VITE_SUPABASE_URL;
-    const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-    return url && key && !url.includes('your-project-url') && !key.includes('your-anon-key');
+    return supabase !== null;
   };
 
   useEffect(() => {
@@ -23,7 +21,10 @@ export const useAuth = () => {
     const savedUser = localStorage.getItem('demo_user');
     if (savedUser) {
       try {
-        setUser(JSON.parse(savedUser));
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+        setLoading(false);
+        return;
       } catch (e) {
         localStorage.removeItem('demo_user');
       }
@@ -33,10 +34,15 @@ export const useAuth = () => {
     if (isSupabaseConfigured()) {
       const getInitialSession = async () => {
         try {
+          if (!supabase) {
+            setLoading(false);
+            return;
+          }
+          
           const { data: { session }, error } = await supabase.auth.getSession();
           if (error) {
             console.error('Error getting session:', error);
-            // Don't set error, fall back to demo mode
+            setLoading(false);
           } else if (session?.user) {
             const supabaseUser = {
               id: session.user.id,
@@ -44,10 +50,13 @@ export const useAuth = () => {
             };
             setUser(supabaseUser);
             localStorage.setItem('demo_user', JSON.stringify(supabaseUser));
+            setLoading(false);
+          } else {
+            setLoading(false);
           }
         } catch (err) {
           console.error('Error in getInitialSession:', err);
-          // Don't set error, fall back to demo mode
+          setLoading(false);
         } finally {
           setLoading(false);
         }
@@ -56,6 +65,11 @@ export const useAuth = () => {
       getInitialSession();
 
       // Listen for auth changes
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+      
       const { data: { subscription } } = supabase.auth.onAuthStateChange(
         async (event, session) => {
           if (session?.user) {
@@ -92,6 +106,10 @@ export const useAuth = () => {
       // If Supabase is configured, try real authentication
       if (isSupabaseConfigured()) {
         try {
+          if (!supabase) {
+            throw new Error('Supabase not configured');
+          }
+          
           const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
@@ -148,6 +166,10 @@ export const useAuth = () => {
       // If Supabase is configured, try real signup
       if (isSupabaseConfigured()) {
         try {
+          if (!supabase) {
+            throw new Error('Supabase not configured');
+          }
+          
           const { data, error } = await supabase.auth.signUp({
             email,
             password,
@@ -197,7 +219,7 @@ export const useAuth = () => {
 
   const signOut = async () => {
     try {
-      if (isSupabaseConfigured()) {
+      if (isSupabaseConfigured() && supabase) {
         await supabase.auth.signOut();
       }
       setUser(null);

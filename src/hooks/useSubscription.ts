@@ -26,8 +26,7 @@ export const useSubscription = (userId: string | undefined) => {
     const fetchSubscription = async () => {
       try {
         // Check if Supabase is properly configured
-        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-        if (!supabaseUrl || supabaseUrl.includes('your-project-url')) {
+        if (!supabase) {
           console.log('Supabase not configured, skipping subscription fetch');
           setSubscription(null);
           setLoading(false);
