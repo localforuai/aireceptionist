@@ -20,17 +20,23 @@ npm install
 
 ### 2. Configure Vapi API
 
-1. Get your Vapi API key from your [Vapi Dashboard](https://dashboard.vapi.ai)
+1. Get your **Public API Key** from your [Vapi Dashboard](https://dashboard.vapi.ai)
+   - Go to your Vapi Dashboard
+   - Navigate to the "API Keys" section
+   - Copy your **Public Key** (not the Private Key)
+   - Public keys typically start with `pk_` or are shorter alphanumeric strings
+   - Private keys are longer and should NOT be used in frontend applications
 2. Copy `.env.example` to `.env`:
    ```bash
    cp .env.example .env
    ```
-3. Add your Vapi credentials to `.env`:
+3. Add your Vapi **Public Key** to `.env`:
    ```
-   VITE_VAPI_API_KEY=your_actual_vapi_api_key
+   VITE_VAPI_API_KEY=your_public_vapi_api_key
    VITE_VAPI_BASE_URL=https://api.vapi.ai
    ```
 
+**Important**: Make sure you're using the **Public Key**, not the Private Key. Private keys should never be used in frontend applications for security reasons.
 ### 3. Start Development Server
 
 ```bash

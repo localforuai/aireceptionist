@@ -152,7 +152,13 @@ export const useVapiData = (userId: string | undefined) => {
             }
           } catch (apiError) {
             console.error('Failed to fetch from Vapi API:', apiError);
-            setError(`Failed to connect to Vapi API: ${apiError instanceof Error ? apiError.message : 'Unknown error'}`);
+            const errorMessage = apiError instanceof Error ? apiError.message : 'Unknown error';
+            
+            if (errorMessage.includes('Invalid Key') || errorMessage.includes('Unauthorized')) {
+              setError('Invalid API Key: Please check that you\'re using your Public API Key (not Private Key) from your Vapi Dashboard. Public keys are safe for frontend use.');
+            } else {
+              setError(`Failed to connect to Vapi API: ${errorMessage}`);
+            }
             setLoading(false);
             return;
           }

@@ -38,6 +38,17 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
               )}
             </div>
           </div>
+          {!hasApiKey && (
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+              <p className="text-xs text-yellow-800">
+                <strong>Need help?</strong> Get your Public API Key from your{' '}
+                <a href="https://dashboard.vapi.ai" target="_blank" rel="noopener noreferrer" className="underline">
+                  Vapi Dashboard
+                </a>
+                . Make sure to use the <strong>Public Key</strong>, not the Private Key.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -52,7 +63,7 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
         <div className="flex-1">
           <h4 className="text-sm font-medium text-green-900 mb-1">Live Data Connected</h4>
           <p className="text-sm text-green-700 mb-3">
-            Dashboard is now displaying live data from your Vapi account (API Key: {import.meta.env.VITE_VAPI_API_KEY?.substring(0, 8)}...).
+            Dashboard is now displaying live data from your Vapi account.
           </p>
           <button
             onClick={onToggleDataSource}
@@ -60,6 +71,9 @@ export const ApiSetupBanner: React.FC<ApiSetupBannerProps> = ({ useRealData, onT
           >
             Switch to Demo Mode
           </button>
+          <div className="mt-2 text-xs text-green-600">
+            Using API Key: {import.meta.env.VITE_VAPI_API_KEY?.substring(0, 8)}...
+          </div>
         </div>
       </div>
     </div>
