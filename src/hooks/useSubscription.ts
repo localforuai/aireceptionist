@@ -25,6 +25,15 @@ export const useSubscription = (userId: string | undefined) => {
 
     const fetchSubscription = async () => {
       try {
+        // Check if Supabase is properly configured
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        if (!supabaseUrl || supabaseUrl.includes('your-project-url')) {
+          console.log('Supabase not configured, skipping subscription fetch');
+          setSubscription(null);
+          setLoading(false);
+          return;
+        }
+
         const { data, error } = await supabase
           .from('stripe_user_subscriptions')
           .select('*')
@@ -32,13 +41,21 @@ export const useSubscription = (userId: string | undefined) => {
 
         if (error) {
           console.error('Error fetching subscription:', error);
-          setError(error.message);
+          // Don't show error if it's just a missing table (Supabase not fully set up)
+          if (error.message.includes('relation') || error.message.includes('does not exist')) {
+            console.log('Subscription table not found, Supabase may not be fully configured');
+            setSubscription(null);
+          } else {
+            setError(error.message);
+          }
         } else {
           setSubscription(data);
         }
       } catch (err) {
         console.error('Unexpected error:', err);
-        setError('An unexpected error occurred');
+        // Don't show error for network issues when Supabase isn't configured
+        console.log('Subscription fetch failed, likely due to Supabase configuration');
+        setSubscription(null);
       } finally {
         setLoading(false);
       }

@@ -13,7 +13,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { login, error } = useAuth();
+  const { signUp, error } = useAuth();
   const [validationError, setValidationError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,7 +34,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
     }
 
     // Demo signup - automatically log in the user
-    const success = await login(email, password);
+    const success = await signUp(email, password);
     if (!success) {
       // Error handling is done in useAuth hook
     }
