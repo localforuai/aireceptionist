@@ -1,37 +1,25 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../hooks/useAuth';
 
 interface LoginFormProps {
   onSwitchToSignup: () => void;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('demo@shop.com');
+  const [password, setPassword] = useState('password');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { login, error } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setError(error.message);
-      }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    
+    await login(email, password);
+    setIsLoading(false);
   };
 
   return (
@@ -45,7 +33,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
               </svg>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-            <p className="text-gray-600">Sign in to your account</p>
+            <p className="text-gray-600">Sign in to access your dashboard</p>
           </div>
 
           {error && (
@@ -113,6 +101,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
               )}
             </button>
           </form>
+
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <p className="text-sm text-blue-800 font-medium mb-1">Demo Credentials:</p>
+            <p className="text-xs text-blue-600">Email: demo@shop.com</p>
+            <p className="text-xs text-blue-600">Password: password</p>
+            <p className="text-xs text-blue-600 mt-2 italic">Or use any email/password combination</p>
+          </div>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">

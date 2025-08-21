@@ -1,32 +1,47 @@
 import { useState, useEffect } from 'react';
-import { User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+
+interface User {
+  id: string;
+  email: string;
+}
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    // Check for existing session in localStorage
+    const savedUser = localStorage.getItem('demo_user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setLoading(false);
   }, []);
 
-  const signOut = async () => {
-    await supabase.auth.signOut();
+  const login = async (email: string, password: string): Promise<boolean> => {
+    setError(null);
+    
+    // Demo authentication - accept any email/password combination
+    if (email && password) {
+      const demoUser: User = {
+        id: `user_${Date.now()}`,
+        email: email
+      };
+      
+      setUser(demoUser);
+      localStorage.setItem('demo_user', JSON.stringify(demoUser));
+      return true;
+    }
+    
+    setError('Please enter both email and password');
+    return false;
   };
 
-  return { user, loading, signOut };
+  const signOut = async () => {
+    setUser(null);
+    localStorage.removeItem('demo_user');
+  };
+
+  return { user, loading, error, login, signOut };
 };

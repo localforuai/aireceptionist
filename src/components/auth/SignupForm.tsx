@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../hooks/useAuth';
 
 interface SignupFormProps {
   onSwitchToLogin: () => void;
@@ -13,42 +13,29 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { login, error } = useAuth();
+  const [validationError, setValidationError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setValidationError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setValidationError('Passwords do not match');
       setIsLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long');
+      setValidationError('Password must be at least 6 characters long');
       setIsLoading(false);
       return;
     }
 
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: undefined, // Disable email confirmation
-        },
-      });
-
-      if (error) {
-        setError(error.message);
-      }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
+    // Demo signup - automatically log in the user
+    await login(email, password);
+    setIsLoading(false);
   };
 
   return (
@@ -65,9 +52,9 @@ export const SignupForm: React.FC<SignupFormProps> = ({ onSwitchToLogin }) => {
             <p className="text-gray-600">Sign up to get started</p>
           </div>
 
-          {error && (
+          {(error || validationError) && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-              {error}
+              {error || validationError}
             </div>
           )}
 
