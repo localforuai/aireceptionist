@@ -16,13 +16,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
     const success = await login(email, password);
     if (!success) {
-      // Error handling is done in useAuth hook
+      setError(authError || 'Login failed. Please try again.');
     }
     setIsLoading(false);
   };
+
+  const [error, setError] = useState('');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
@@ -38,9 +41,9 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             <p className="text-gray-600">Sign in to access your dashboard</p>
           </div>
 
-          {error && (
+          {(error || authError) && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-              {error}
+              {error || authError}
             </div>
           )}
 
@@ -91,7 +94,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white py-3 px-4 rounded-lg font-medium hover:from-blue-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
