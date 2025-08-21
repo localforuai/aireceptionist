@@ -1,6 +1,9 @@
 import React from 'react';
-import { ArrowPathIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, Cog6ToothIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useSubscription } from '../hooks/useSubscription';
+import { SubscriptionStatus } from './SubscriptionStatus';
 
 interface DashboardHeaderProps {
   onRefresh: () => void;
@@ -15,7 +18,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   useRealData, 
   onToggleDataSource 
 }) => {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
   return (
     <div className="bg-white border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4">
@@ -28,11 +32,18 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </div>
           <div>
             <h1 className="text-xl font-semibold text-gray-900">AI Receptionist Dashboard</h1>
-            <p className="text-sm text-gray-600">{user?.shopName}</p>
+            <p className="text-sm text-gray-600">{user?.email}</p>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
+          {/* Subscription Status */}
+          {user && (
+            <div className="hidden sm:block">
+              <SubscriptionStatus userId={user.id} />
+            </div>
+          )}
+
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-600">Data Source:</span>
             <button
@@ -46,6 +57,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               {useRealData ? 'Live Vapi Data' : 'Demo Data'}
             </button>
           </div>
+
+          <button
+            onClick={() => navigate('/products')}
+            className="inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            <ShoppingBagIcon className="-ml-0.5 mr-2 h-4 w-4" />
+            Products
+          </button>
 
           <button
             onClick={onRefresh}
@@ -62,13 +81,20 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           </button>
 
           <button
-            onClick={logout}
+            onClick={signOut}
             className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
           >
             Sign Out
           </button>
         </div>
       </div>
+
+      {/* Mobile Subscription Status */}
+      {user && (
+        <div className="sm:hidden mt-4">
+          <SubscriptionStatus userId={user.id} />
+        </div>
+      )}
     </div>
   );
 };
