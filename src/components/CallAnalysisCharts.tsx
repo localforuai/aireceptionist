@@ -12,8 +12,8 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
+        {[1, 2].map((i) => (
           <div key={i} className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
             <div className="h-6 bg-gray-200 rounded mb-4 animate-pulse"></div>
             <div className="h-64 bg-gray-100 rounded animate-pulse"></div>
@@ -36,45 +36,15 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
               cy="50%"
               outerRadius={45}
               dataKey="count"
-              label={false}
+              label={({ reason, percentage }) => `${reason}: ${percentage}%`}
+              labelLine={false}
             >
               {chartData.endReasons.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip formatter={(value, name) => [`${value} calls`, name]} />
+            <Tooltip formatter={(value, name, props) => [`${value} calls (${props.payload.percentage}%)`, props.payload.reason]} />
           </PieChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Average Duration by Assistant */}
-      <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-100">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">Avg Duration</h3>
-        <ResponsiveContainer width="100%" height={150}>
-          <BarChart data={chartData.assistantDurations}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="assistant" tick={{ fontSize: 9 }} />
-            <YAxis tick={{ fontSize: 9 }} />
-            <Tooltip 
-              formatter={(value, name) => [`${Math.floor(Number(value) / 60)}:${(Number(value) % 60).toString().padStart(2, '0')}`, 'Avg Duration']}
-              labelFormatter={(label) => `Assistant: ${label}`}
-            />
-            <Bar dataKey="avgDuration" fill="#2563eb" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Success Rate Distribution */}
-      <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-100">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">Success Rate</h3>
-        <ResponsiveContainer width="100%" height={150}>
-          <BarChart data={chartData.successDistribution}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="range" tick={{ fontSize: 9 }} />
-            <YAxis tick={{ fontSize: 9 }} />
-            <Tooltip formatter={(value) => [`${value} calls`, 'Count']} />
-            <Bar dataKey="count" fill="#0d9488" radius={[4, 4, 0, 0]} />
-          </BarChart>
         </ResponsiveContainer>
       </div>
 
