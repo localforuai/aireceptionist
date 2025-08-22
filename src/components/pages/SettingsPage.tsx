@@ -196,15 +196,6 @@ export const SettingsPage: React.FC = () => {
               </div>
               <p className="text-sm text-gray-600">{formatLastSync(calendarData?.lastSyncTime || null)}</p>
             </div>
-
-            {calendarData?.isConnected && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-700 mb-1">{calendarData.dailyBookingCount}</div>
-                  <div className="text-sm text-blue-600">{t('calendar.todaysBookings')}</div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
