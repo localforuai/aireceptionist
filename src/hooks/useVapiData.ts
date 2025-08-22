@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CallData, DashboardMetrics, ChartData, SubscriptionData } from '../types';
+import { CallData, DashboardMetrics, ChartData, SubscriptionData, CalendarSyncData } from '../types';
 import { backendApi } from '../services/backendApi';
 
 export const useVapiData = (userId: string | undefined) => {
@@ -7,6 +7,7 @@ export const useVapiData = (userId: string | undefined) => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
+  const [calendarData, setCalendarData] = useState<CalendarSyncData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useRealData, setUseRealData] = useState(false);
@@ -61,6 +62,23 @@ export const useVapiData = (userId: string | undefined) => {
       autoTopUpEnabled: false,
       topUpMinutes: 100,
       topUpPrice: 25
+    };
+  };
+
+  const generateMockCalendarData = (): CalendarSyncData => {
+    return {
+      isConnected: Math.random() > 0.5,
+      selectedCalendar: Math.random() > 0.5 ? 'primary' : null,
+      availableCalendars: [
+        { id: 'primary', name: 'Primary Calendar' },
+        { id: 'massage-bookings', name: 'Massage Bookings' },
+        { id: 'staff-schedule', name: 'Staff Schedule' }
+      ],
+      syncMode: Math.random() > 0.5 ? '2-way' : 'create-only',
+      conflictCheck: Math.random() > 0.5,
+      dailyBookingCount: Math.floor(Math.random() * 15) + 3,
+      lastSyncTime: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 3600000).toISOString() : null,
+      error: Math.random() > 0.8 ? 'Sync failed: Calendar permission expired' : null
     };
   };
 
@@ -199,11 +217,13 @@ export const useVapiData = (userId: string | undefined) => {
         const calculatedMetrics = calculateMetrics(calls);
         const chartAnalytics = generateChartData(calls);
         const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
+        const calendar = generateMockCalendarData();
 
         setCallData(calls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
         setSubscriptionData(subscription);
+        setCalendarData(calendar);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch call data';
         setError(errorMessage);
@@ -224,12 +244,14 @@ export const useVapiData = (userId: string | undefined) => {
       const calculatedMetrics = calculateMetrics(mockCalls);
       const chartAnalytics = generateChartData(mockCalls);
       const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
+      const calendar = generateMockCalendarData();
 
       setTimeout(() => {
         setCallData(mockCalls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
         setSubscriptionData(subscription);
+        setCalendarData(calendar);
         setLoading(false);
       }, 1000);
     }
@@ -261,17 +283,80 @@ export const useVapiData = (userId: string | undefined) => {
     }
   };
 
+  const handleCalendarConnect = () => {
+    if (calendarData) {
+      setCalendarData({
+        ...calendarData,
+        isConnected: true,
+        lastSyncTime: new Date().toISOString(),
+        error: null
+      });
+      console.log('Google Calendar OAuth initiated');
+    }
+  };
+
+  const handleCalendarDisconnect = () => {
+    if (calendarData) {
+      setCalendarData({
+        ...calendarData,
+        isConnected: false,
+        selectedCalendar: null,
+        lastSyncTime: null,
+        error: null
+      });
+      console.log('Google Calendar disconnected');
+    }
+  };
+
+  const handleSelectCalendar = (calendarId: string) => {
+    if (calendarData) {
+      setCalendarData({
+        ...calendarData,
+        selectedCalendar: calendarId,
+        lastSyncTime: new Date().toISOString(),
+        error: null
+      });
+      console.log('Calendar selected:', calendarId);
+    }
+  };
+
+  const handleChangeSyncMode = (mode: '2-way' | 'create-only') => {
+    if (calendarData) {
+      setCalendarData({
+        ...calendarData,
+        syncMode: mode
+      });
+      console.log('Sync mode changed to:', mode);
+    }
+  };
+
+  const handleToggleConflictCheck = (enabled: boolean) => {
+    if (calendarData) {
+      setCalendarData({
+        ...calendarData,
+        conflictCheck: enabled
+      });
+      console.log('Conflict check:', enabled ? 'enabled' : 'disabled');
+    }
+  };
+
   return { 
     callData, 
     metrics, 
     chartData, 
     subscriptionData,
+    calendarData,
     loading, 
     error, 
     refreshData, 
     useRealData, 
     toggleDataSource,
     handleTopUp,
-    handleToggleAutoTopUp
+    handleToggleAutoTopUp,
+    handleCalendarConnect,
+    handleCalendarDisconnect,
+    handleSelectCalendar,
+    handleChangeSyncMode,
+    handleToggleConflictCheck
   };
 };

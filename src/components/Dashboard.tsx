@@ -4,6 +4,7 @@ import { MetricsCards } from './MetricsCards';
 import { CallAnalysisCharts } from './CallAnalysisCharts';
 import { CallLogsTable } from './CallLogsTable';
 import { SubscriptionUsage } from './SubscriptionUsage';
+import { GoogleCalendarSync } from './GoogleCalendarSync';
 import { ApiSetupBanner } from './ApiSetupBanner';
 import { useAuth } from '../hooks/useAuth';
 import { useVapiData } from '../hooks/useVapiData';
@@ -15,13 +16,19 @@ export const Dashboard: React.FC = () => {
     metrics, 
     chartData, 
     subscriptionData,
+    calendarData,
     loading, 
     error, 
     refreshData, 
     useRealData, 
     toggleDataSource,
     handleTopUp,
-    handleToggleAutoTopUp
+    handleToggleAutoTopUp,
+    handleCalendarConnect,
+    handleCalendarDisconnect,
+    handleSelectCalendar,
+    handleChangeSyncMode,
+    handleToggleConflictCheck
   } = useVapiData(user?.id);
 
   if (error) {
@@ -77,6 +84,19 @@ export const Dashboard: React.FC = () => {
             loading={loading}
             onTopUp={handleTopUp}
             onToggleAutoTopUp={handleToggleAutoTopUp}
+          />
+        )}
+
+        {/* Google Calendar Sync */}
+        {calendarData && (
+          <GoogleCalendarSync 
+            calendarData={calendarData}
+            loading={loading}
+            onConnect={handleCalendarConnect}
+            onDisconnect={handleCalendarDisconnect}
+            onSelectCalendar={handleSelectCalendar}
+            onChangeSyncMode={handleChangeSyncMode}
+            onToggleConflictCheck={handleToggleConflictCheck}
           />
         )}
 

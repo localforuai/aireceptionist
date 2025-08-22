@@ -45,3 +45,14 @@ export interface SubscriptionData {
   topUpMinutes: number;
   topUpPrice: number;
 }
+
+export interface CalendarSyncData {
+  isConnected: boolean;
+  selectedCalendar: string | null;
+  availableCalendars: Array<{ id: string; name: string }>;
+  syncMode: '2-way' | 'create-only';
+  conflictCheck: boolean;
+  dailyBookingCount: number;
+  lastSyncTime: string | null;
+  error: string | null;
+}
