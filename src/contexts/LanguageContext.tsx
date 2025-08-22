@@ -138,8 +138,6 @@ const translations = {
     'bookings.pending': 'Pending',
     'bookings.cancelled': 'Cancelled',
     'bookings.noBookings': 'No bookings for this day',
-    'bookings.loadMore': 'Load More',
-    'bookings.more': 'more',
     
     // Call Logs
     'callLogs.viewAll': 'View All',
@@ -279,8 +277,6 @@ const translations = {
     'bookings.pending': 'รอดำเนินการ',
     'bookings.cancelled': 'ยกเลิก',
     'bookings.noBookings': 'ไม่มีการจองในวันนี้',
-    'bookings.loadMore': 'โหลดเพิ่มเติม',
-    'bookings.more': 'เพิ่มเติม',
     
     // Call Logs
     'callLogs.viewAll': 'ดูทั้งหมด',
