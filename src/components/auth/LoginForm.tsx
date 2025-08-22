@@ -12,16 +12,16 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login, error: authError } = useAuth();
-  const [localError, setLocalError] = useState('');
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setLocalError('');
+    setError('');
 
     const success = await login(email, password);
     if (!success) {
-      setLocalError(authError || 'Login failed. Please try again.');
+      setError(authError || 'Login failed. Please try again.');
     }
     setIsLoading(false);
   };
@@ -42,7 +42,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSwitchToSignup }) => {
 
           {(localError || authError) && (
             <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6">
-              {localError || authError}
+              {error || authError}
             </div>
           )}
 

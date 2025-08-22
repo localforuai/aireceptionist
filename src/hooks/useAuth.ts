@@ -26,10 +26,12 @@ export const useAuth = () => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setError(null);
+    setLoading(true);
     
     try {
       if (!email || !password) {
         setError('Please enter both email and password');
+        setLoading(false);
         return false;
       }
 
@@ -43,21 +45,25 @@ export const useAuth = () => {
       
       setUser(demoUser);
       localStorage.setItem('demo_user', JSON.stringify(demoUser));
+      setLoading(false);
       return true;
 
     } catch (err) {
       console.error('Login error:', err);
       setError('Login failed. Please try again.');
+      setLoading(false);
       return false;
     }
   };
 
   const signUp = async (email: string, password: string): Promise<boolean> => {
     setError(null);
+    setLoading(true);
     
     try {
       if (!email || !password) {
         setError('Please enter both email and password');
+        setLoading(false);
         return false;
       }
 
@@ -71,11 +77,13 @@ export const useAuth = () => {
       
       setUser(demoUser);
       localStorage.setItem('demo_user', JSON.stringify(demoUser));
+      setLoading(false);
       return true;
 
     } catch (err) {
       console.error('Signup error:', err);
       setError('Signup failed. Please try again.');
+      setLoading(false);
       return false;
     }
   };
