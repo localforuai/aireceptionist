@@ -188,10 +188,14 @@ export const GoogleCalendarSync: React.FC<GoogleCalendarSyncProps> = ({
         {/* Stats & Status */}
         <div className="space-y-3">
           {/* Daily Bookings */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-3">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-center mb-2">
+              <CalendarIcon className="h-5 w-5 text-green-600 mr-2" />
+              <span className="text-sm font-semibold text-green-800">Today's Bookings</span>
+            </div>
             <div className="text-center">
-              <div className="text-lg sm:text-xl font-bold text-blue-700">{calendarData.dailyBookingCount}</div>
-              <div className="text-xs text-blue-600">Today's Bookings</div>
+              <div className="text-3xl sm:text-4xl font-bold text-green-700 mb-1">{calendarData.dailyBookingCount}</div>
+              <div className="text-xs text-green-600 uppercase tracking-wide">Appointments</div>
             </div>
           </div>
 
