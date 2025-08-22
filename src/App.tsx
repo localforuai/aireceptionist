@@ -2,8 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContainer } from './components/auth/AuthContainer';
 import { Dashboard } from './components/Dashboard';
-import { ProductsPage } from './components/ProductsPage';
-import { SuccessPage } from './components/SuccessPage';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
@@ -29,8 +27,6 @@ function App() {
           {user ? (
             <>
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/products" element={<ProductsPage />} />
-              <Route path="/success" element={<SuccessPage />} />
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </>
           ) : (
