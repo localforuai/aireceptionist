@@ -265,12 +265,12 @@ export const SettingsPage: React.FC = () => {
                           className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 focus:ring-purple-500 focus:ring-2"
                           disabled={!subscriptionData.autoTopUpEnabled}
                         />
-                        <span className={`ml-2 text-sm ${subscriptionData.autoTopUpEnabled ? 'text-gray-700' : 'text-gray-400'}`}>
-                          {option.minutes} {t('metrics.minutes')}
-                        </span>
-                      </div>
-                      <span className={`text-sm font-medium ${subscriptionData.autoTopUpEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
+                        <span className={`ml-2 text-sm font-medium ${subscriptionData.autoTopUpEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
                         ${option.price}
+                      </span>
+                      </div>
+                      <span className={`text-sm ${subscriptionData.autoTopUpEnabled ? 'text-gray-700' : 'text-gray-400'}`}>
+                        {option.minutes} {t('metrics.minutes')}
                       </span>
                     </label>
                   ))}
@@ -303,13 +303,13 @@ export const SettingsPage: React.FC = () => {
                           className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                         />
                         <div className="ml-3">
-                          <div className="text-lg font-bold text-green-700">
-                            {option.minutes} {t('metrics.minutes')}
+                          <div className="text-xl font-semibold text-green-600">
+                            ${option.price}
                           </div>
                         </div>
                       </div>
-                      <div className="text-xl font-semibold text-green-600">
-                        ${option.price}
+                      <div className="text-lg font-bold text-green-700">
+                        {option.minutes} {t('metrics.minutes')}
                       </div>
                     </label>
                   ))}

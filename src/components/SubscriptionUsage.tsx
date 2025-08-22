@@ -177,11 +177,11 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                     className="w-3 h-3 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
                   />
                   <div className="ml-2 flex-1 flex justify-between items-center">
-                    <span className="text-xs font-medium text-green-700">
-                      {option.minutes} {t('metrics.minutes')}
-                    </span>
                     <span className="text-xs font-semibold text-green-600">
                       ${option.price}
+                    </span>
+                    <span className="text-xs font-medium text-green-700">
+                      {option.minutes} {t('metrics.minutes')}
                     </span>
                   </div>
                 </label>
@@ -252,11 +252,11 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                     disabled={!subscriptionData.autoTopUpEnabled}
                   />
                   <div className="ml-2 flex-1 flex justify-between items-center">
-                    <span className={`text-xs ${subscriptionData.autoTopUpEnabled ? 'text-gray-700' : 'text-gray-400'}`}>
-                      {option.minutes} {t('metrics.minutes')}
-                    </span>
                     <span className={`text-xs font-medium ${subscriptionData.autoTopUpEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
                       ${option.price}
+                    </span>
+                    <span className={`text-xs ${subscriptionData.autoTopUpEnabled ? 'text-gray-700' : 'text-gray-400'}`}>
+                      {option.minutes} {t('metrics.minutes')}
                     </span>
                   </div>
                 </label>
