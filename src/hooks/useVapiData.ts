@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { CallData, DashboardMetrics, ChartData, SubscriptionData, CalendarSyncData } from '../types';
 import { backendApi } from '../services/backendApi';
 
 export const useVapiData = (userId: string | undefined) => {
+  const location = useLocation();
   const [callData, setCallData] = useState<CallData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -11,6 +13,23 @@ export const useVapiData = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useRealData, setUseRealData] = useState(false);
+  
+  // Create a singleton instance to share data across routes
+  const [dataCache, setDataCache] = useState<{
+    callData: CallData[];
+    metrics: DashboardMetrics | null;
+    chartData: ChartData | null;
+    subscriptionData: SubscriptionData | null;
+    calendarData: CalendarSyncData | null;
+    lastFetch: number;
+  }>({
+    callData: [],
+    metrics: null,
+    chartData: null,
+    subscriptionData: null,
+    calendarData: null,
+    lastFetch: 0
+  });
 
   // Mock data generation for demonstration
   const generateMockData = (): CallData[] => {
@@ -152,6 +171,18 @@ export const useVapiData = (userId: string | undefined) => {
 
   useEffect(() => {
     if (!userId) return;
+    
+    // Check if we have recent cached data (within 5 minutes)
+    const now = Date.now();
+    if (dataCache.lastFetch && (now - dataCache.lastFetch) < 5 * 60 * 1000) {
+      setCallData(dataCache.callData);
+      setMetrics(dataCache.metrics);
+      setChartData(dataCache.chartData);
+      setSubscriptionData(dataCache.subscriptionData);
+      setCalendarData(dataCache.calendarData);
+      setLoading(false);
+      return;
+    }
 
     const fetchData = async () => {
       try {
@@ -224,6 +255,16 @@ export const useVapiData = (userId: string | undefined) => {
         setChartData(chartAnalytics);
         setSubscriptionData(subscription);
         setCalendarData(calendar);
+        
+        // Update cache
+        setDataCache({
+          callData: calls,
+          metrics: calculatedMetrics,
+          chartData: chartAnalytics,
+          subscriptionData: subscription,
+          calendarData: calendar,
+          lastFetch: now
+        });
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch call data';
         setError(errorMessage);
@@ -234,7 +275,7 @@ export const useVapiData = (userId: string | undefined) => {
     };
 
     fetchData();
-  }, [userId, useRealData]);
+  }, [userId, useRealData, dataCache.lastFetch]);
 
   const refreshData = () => {
     if (userId) {
@@ -252,6 +293,16 @@ export const useVapiData = (userId: string | undefined) => {
         setChartData(chartAnalytics);
         setSubscriptionData(subscription);
         setCalendarData(calendar);
+        
+        // Update cache
+        setDataCache({
+          callData: mockCalls,
+          metrics: calculatedMetrics,
+          chartData: chartAnalytics,
+          subscriptionData: subscription,
+          calendarData: calendar,
+          lastFetch: Date.now()
+        });
         setLoading(false);
       }, 1000);
     }

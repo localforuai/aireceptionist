@@ -115,6 +115,32 @@ const translations = {
     'api.backendServer': 'Backend Server: http://localhost:3001 | Private Key: Secure ✓',
     
     // Common
+    'nav.overview': 'Overview',
+    'nav.calls': 'Calls',
+    'nav.bookings': 'Bookings',
+    'nav.settings': 'Settings',
+    
+    // Overview
+    'overview.liveStatus': 'Live Status',
+    'overview.liveCall': 'Live Call',
+    'overview.noActiveCalls': 'No Active Calls',
+    'overview.currentCall': 'Current Call',
+    'overview.duration': 'Duration',
+    'overview.nextBookings': 'Next Bookings',
+    
+    // Bookings
+    'bookings.thisWeek': 'This Week',
+    'bookings.appointments': 'appointments',
+    'bookings.total': 'total',
+    'bookings.confirmed': 'Confirmed',
+    'bookings.pending': 'Pending',
+    'bookings.cancelled': 'Cancelled',
+    'bookings.noBookings': 'No bookings for this day',
+    
+    // Call Logs
+    'callLogs.viewAll': 'View All',
+    'callLogs.more': 'more',
+    
     'common.loading': 'Loading...',
     'common.error': 'Error',
     'common.tryAgain': 'Try Again',
@@ -226,6 +252,32 @@ const translations = {
     'api.backendServer': 'เซิร์ฟเวอร์แบ็กเอนด์: http://localhost:3001 | คีย์ส่วนตัว: ปลอดภัย ✓',
     
     // Common
+    'nav.overview': 'ภาพรวม',
+    'nav.calls': 'การโทร',
+    'nav.bookings': 'การจอง',
+    'nav.settings': 'การตั้งค่า',
+    
+    // Overview
+    'overview.liveStatus': 'สถานะสด',
+    'overview.liveCall': 'การโทรสด',
+    'overview.noActiveCalls': 'ไม่มีการโทรที่ใช้งาน',
+    'overview.currentCall': 'การโทรปัจจุบัน',
+    'overview.duration': 'ระยะเวลา',
+    'overview.nextBookings': 'การจองถัดไป',
+    
+    // Bookings
+    'bookings.thisWeek': 'สัปดาห์นี้',
+    'bookings.appointments': 'นัดหมาย',
+    'bookings.total': 'ทั้งหมด',
+    'bookings.confirmed': 'ยืนยันแล้ว',
+    'bookings.pending': 'รอดำเนินการ',
+    'bookings.cancelled': 'ยกเลิก',
+    'bookings.noBookings': 'ไม่มีการจองในวันนี้',
+    
+    // Call Logs
+    'callLogs.viewAll': 'ดูทั้งหมด',
+    'callLogs.more': 'เพิ่มเติม',
+    
     'common.loading': 'กำลังโหลด...',
     'common.error': 'ข้อผิดพลาด',
     'common.tryAgain': 'ลองอีกครั้ง',

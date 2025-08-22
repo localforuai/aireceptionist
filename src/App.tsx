@@ -2,7 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthContainer } from './components/auth/AuthContainer';
-import { Dashboard } from './components/Dashboard';
+import { DashboardLayout } from './components/layout/DashboardLayout';
+import { OverviewPage } from './components/pages/OverviewPage';
+import { CallsPage } from './components/pages/CallsPage';
+import { BookingsPage } from './components/pages/BookingsPage';
+import { SettingsPage } from './components/pages/SettingsPage';
 import { useAuth } from './hooks/useAuth';
 
 function App() {
@@ -28,7 +32,12 @@ function App() {
           <Routes>
             {user ? (
               <>
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/dashboard" element={<DashboardLayout />}>
+                  <Route index element={<OverviewPage />} />
+                  <Route path="calls" element={<CallsPage />} />
+                  <Route path="bookings" element={<BookingsPage />} />
+                  <Route path="settings" element={<SettingsPage />} />
+                </Route>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
               </>
             ) : (
