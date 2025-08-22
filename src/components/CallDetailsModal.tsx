@@ -67,10 +67,6 @@ export const CallDetailsModal: React.FC<CallDetailsModalProps> = ({ call, onClos
                     <p className="font-medium">{formatDuration(call.duration)}</p>
                   </div>
                   <div>
-                    <span className="text-gray-500">Cost:</span>
-                    <p className="font-medium">${call.cost.toFixed(2)}</p>
-                  </div>
-                  <div>
                     <span className="text-gray-500">Assistant:</span>
                     <p className="font-medium">{call.assistantName}</p>
                   </div>

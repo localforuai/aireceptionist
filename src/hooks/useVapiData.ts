@@ -51,7 +51,6 @@ export const useVapiData = (userId: string | undefined) => {
       totalCalls: calls.length,
       averageCallDuration: Math.round((totalCallMinutes / calls.length) * 60),
       callSuccessRate: Math.round((successfulCalls.length / calls.length) * 100),
-      totalCost: Math.round(calls.reduce((sum, call) => sum + call.cost, 0) * 100) / 100
     };
   };
 
@@ -145,7 +144,6 @@ export const useVapiData = (userId: string | undefined) => {
                 totalCalls: 0,
                 averageCallDuration: 0,
                 callSuccessRate: 0,
-                totalCost: 0
               });
               setChartData({
                 endReasons: [],

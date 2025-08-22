@@ -26,7 +26,6 @@ export interface DashboardMetrics {
   totalCalls: number;
   averageCallDuration: number;
   callSuccessRate: number;
-  totalCost: number;
 }
 
 export interface ChartData {

@@ -40,14 +40,6 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
       icon: CheckCircleIcon,
       color: 'green',
       change: '+5.4%'
-    },
-    {
-      title: 'Total Cost',
-      value: loading ? '---' : `$${metrics.totalCost.toFixed(2)}`,
-      unit: 'USD',
-      icon: CurrencyDollarIcon,
-      color: 'purple',
-      change: '+15.8%'
     }
   ];
 
@@ -60,7 +52,7 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
       {cards.map((card, index) => (
         <div key={card.title} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 sm:p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
