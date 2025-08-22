@@ -89,25 +89,23 @@ export const BookingsPage: React.FC = () => {
 
       {/* Today's Bookings Summary */}
       <div className="flex-shrink-0 mb-3">
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-3 shadow-sm">
-          <div className="flex items-center justify-center mb-2">
-            <CalendarIcon className="h-4 w-4 text-green-600 mr-2" />
-            <span className="text-sm font-semibold text-green-800">{t('calendar.todaysBookings')}</span>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-green-700 mb-1">{todayBookings.length}</div>
-            <div className="text-xs text-green-600 uppercase tracking-wide">{t('calendar.appointments')}</div>
+        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-2 shadow-sm">
+          <div className="flex items-center justify-center gap-2">
+            <CalendarIcon className="h-3 w-3 text-green-600" />
+            <span className="text-xs font-medium text-green-800">{t('calendar.todaysBookings')}</span>
+            <div className="text-lg font-bold text-green-700">{todayBookings.length}</div>
+            <div className="text-xs text-green-600">{t('calendar.appointments')}</div>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-3 overflow-hidden min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-hidden min-h-0">
         {/* Week Calendar */}
         <div className="lg:col-span-1 overflow-hidden">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3 h-full overflow-hidden">
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('bookings.thisWeek')}</h3>
-            <div className="space-y-1 overflow-y-auto" style={{ maxHeight: 'calc(100% - 2rem)' }}>
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-4 h-full overflow-hidden">
+            <h3 className="text-base font-semibold text-gray-900 mb-4">{t('bookings.thisWeek')}</h3>
+            <div className="space-y-2 overflow-y-auto" style={{ maxHeight: 'calc(100% - 3rem)' }}>
               {weekDates.map((date) => {
                 const dayBookings = generateBookings(date);
                 const isSelected = format(date, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd');
@@ -117,7 +115,7 @@ export const BookingsPage: React.FC = () => {
                   <button
                     key={date.toISOString()}
                     onClick={() => setSelectedDate(date)}
-                    className={`w-full text-left p-2 rounded-lg transition-colors ${
+                    className={`w-full text-left p-3 rounded-lg transition-colors ${
                       isSelected 
                         ? 'bg-blue-100 text-blue-700 border border-blue-200' 
                         : 'hover:bg-gray-50'
@@ -125,11 +123,11 @@ export const BookingsPage: React.FC = () => {
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className={`text-xs font-medium ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                        <div className={`text-sm font-medium ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
                           {format(date, 'EEE, MMM d')}
                           {isToday && ` (${t('bookings.today')})`}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-sm text-gray-500">
                           {dayBookings.length} {t('bookings.appointments')}
                         </div>
                       </div>
@@ -143,14 +141,14 @@ export const BookingsPage: React.FC = () => {
         </div>
 
         {/* Today's Bookings */}
-        <div className="lg:col-span-3 overflow-hidden">
+        <div className="lg:col-span-2 overflow-hidden">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col">
-            <div className="p-3 border-b border-gray-100 flex-shrink-0">
+            <div className="p-4 border-b border-gray-100 flex-shrink-0">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-gray-900">
+                <h3 className="text-base font-semibold text-gray-900">
                   {format(selectedDate, 'EEEE, MMMM d')} {t('bookings.appointments')}
                 </h3>
-                <span className="text-sm text-gray-600">
+                <span className="text-base text-gray-600">
                   {todayBookings.length} {t('bookings.total')}
                 </span>
               </div>
@@ -159,7 +157,7 @@ export const BookingsPage: React.FC = () => {
             <div className="flex-1 overflow-y-auto min-h-0">
               <div className="divide-y divide-gray-100">
                 {todayBookings.map((booking) => (
-                  <div key={booking.id} className="p-3 hover:bg-gray-50 transition-colors">
+                  <div key={booking.id} className="p-4 hover:bg-gray-50 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0">
@@ -170,33 +168,33 @@ export const BookingsPage: React.FC = () => {
                         
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-sm font-medium text-gray-900">
+                            <span className="text-base font-medium text-gray-900">
                               {booking.time}
                             </span>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-sm text-gray-500">
                               ({booking.duration} {t('bookings.minutes')})
                             </span>
                           </div>
                           
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <div className="flex items-center gap-4 text-base text-gray-600">
                             <div className="flex items-center gap-1">
-                              <UserIcon className="w-3 h-3" />
+                              <UserIcon className="w-4 h-4" />
                               <span className="truncate">{booking.customer}</span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <PhoneIcon className="w-3 h-3" />
+                              <PhoneIcon className="w-4 h-4" />
                               <span className="truncate">{booking.phone}</span>
                             </div>
                           </div>
                           
-                          <div className="text-xs text-gray-500 mt-1 truncate">
+                          <div className="text-sm text-gray-500 mt-1 truncate">
                             {booking.service}
                           </div>
                         </div>
                       </div>
                       
                       <div className="flex-shrink-0">
-                        <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(booking.status)}`}>
+                        <span className={`inline-flex px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(booking.status)}`}>
                           {booking.status === 'confirmed' ? t('bookings.confirmed') :
                            booking.status === 'pending' ? t('bookings.pending') :
                            t('bookings.cancelled')}
@@ -211,7 +209,7 @@ export const BookingsPage: React.FC = () => {
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <CalendarIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                    <p className="text-sm text-gray-500">{t('bookings.noBookings')}</p>
+                    <p className="text-base text-gray-500">{t('bookings.noBookings')}</p>
                   </div>
                 </div>
               )}
