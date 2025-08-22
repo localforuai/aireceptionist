@@ -24,19 +24,19 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-8">
       {/* Call End Reasons */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Call End Reasons</h3>
-        <ResponsiveContainer width="100%" height={250}>
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Call End Reasons</h3>
+        <ResponsiveContainer width="100%" height={200}>
           <PieChart>
             <Pie
               data={chartData.endReasons}
               cx="50%"
               cy="50%"
-              outerRadius={80}
+              outerRadius={60}
               dataKey="count"
-              label={({ reason, percentage }) => `${reason} (${percentage}%)`}
+              label={false}
             >
               {chartData.endReasons.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -48,13 +48,13 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
       </div>
 
       {/* Average Duration by Assistant */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Avg Duration by Assistant</h3>
-        <ResponsiveContainer width="100%" height={250}>
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Avg Duration by Assistant</h3>
+        <ResponsiveContainer width="100%" height={200}>
           <BarChart data={chartData.assistantDurations}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="assistant" tick={{ fontSize: 12 }} />
-            <YAxis label={{ value: 'Duration (sec)', angle: -90, position: 'insideLeft' }} />
+            <XAxis dataKey="assistant" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} />
             <Tooltip 
               formatter={(value, name) => [`${Math.floor(Number(value) / 60)}:${(Number(value) % 60).toString().padStart(2, '0')}`, 'Avg Duration']}
               labelFormatter={(label) => `Assistant: ${label}`}
@@ -65,13 +65,13 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
       </div>
 
       {/* Success Rate Distribution */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Success Rate Distribution</h3>
-        <ResponsiveContainer width="100%" height={250}>
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Success Rate Distribution</h3>
+        <ResponsiveContainer width="100%" height={200}>
           <BarChart data={chartData.successDistribution}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="range" label={{ value: 'Success Score Range', position: 'insideBottom', offset: -5 }} />
-            <YAxis label={{ value: 'Call Count', angle: -90, position: 'insideLeft' }} />
+            <XAxis dataKey="range" tick={{ fontSize: 10 }} />
+            <YAxis tick={{ fontSize: 10 }} />
             <Tooltip formatter={(value) => [`${value} calls`, 'Count']} />
             <Bar dataKey="count" fill="#0d9488" radius={[4, 4, 0, 0]} />
           </BarChart>
@@ -79,14 +79,14 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
       </div>
 
       {/* Daily Call Volume */}
-      <div className="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Call Volume (Last 7 Days)</h3>
-        <ResponsiveContainer width="100%" height={250}>
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 border border-gray-100">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Daily Call Volume (Last 7 Days)</h3>
+        <ResponsiveContainer width="100%" height={200}>
           <LineChart data={chartData.dailyCallVolume}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-            <XAxis dataKey="date" />
-            <YAxis yAxisId="left" label={{ value: 'Calls', angle: -90, position: 'insideLeft' }} />
-            <YAxis yAxisId="right" orientation="right" label={{ value: 'Minutes', angle: 90, position: 'insideRight' }} />
+            <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+            <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
+            <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} />
             <Tooltip />
             <Bar yAxisId="left" dataKey="calls" fill="#ea580c" radius={[2, 2, 0, 0]} />
             <Line yAxisId="right" type="monotone" dataKey="minutes" stroke="#2563eb" strokeWidth={3} dot={{ r: 4 }} />

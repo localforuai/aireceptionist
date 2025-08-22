@@ -60,12 +60,12 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-8">
       {cards.map((card, index) => (
-        <div key={card.title} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-6 border border-gray-100">
+        <div key={card.title} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 sm:p-6 border border-gray-100">
           <div className="flex items-center justify-between mb-4">
-            <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${colorClasses[card.color as keyof typeof colorClasses]} flex items-center justify-center`}>
-              <card.icon className="w-6 h-6 text-white" />
+            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-r ${colorClasses[card.color as keyof typeof colorClasses]} flex items-center justify-center`}>
+              <card.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <span className={`text-sm font-medium px-2 py-1 rounded-full ${
               card.change.startsWith('+') 
@@ -79,12 +79,12 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
           <div className="space-y-1">
             <p className="text-2xl font-bold text-gray-900">
               {loading ? (
-                <div className="h-8 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-6 sm:h-8 bg-gray-200 rounded animate-pulse"></div>
               ) : (
                 card.value
               )}
             </p>
-            <p className="text-sm text-gray-600">{card.title}</p>
+            <p className="text-xs sm:text-sm text-gray-600">{card.title}</p>
             <p className="text-xs text-gray-400 uppercase tracking-wider">{card.unit}</p>
           </div>
         </div>
