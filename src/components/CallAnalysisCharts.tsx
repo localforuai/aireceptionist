@@ -12,6 +12,17 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
   const { t } = useLanguage();
   const COLORS = ['#2563eb', '#0d9488', '#ea580c', '#dc2626', '#7c3aed', '#059669'];
 
+  const getTranslatedReason = (reason: string) => {
+    const reasonMap: Record<string, string> = {
+      'customer_hangup': t('endReasons.customerHangup'),
+      'customer_complete': t('endReasons.customerComplete'),
+      'assistant_hangup': t('endReasons.assistantHangup'),
+      'system_error': t('endReasons.systemError'),
+      'timeout': t('endReasons.timeout')
+    };
+    return reasonMap[reason] || reason.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   if (loading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
@@ -49,7 +60,7 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
               <Tooltip 
                 formatter={(value, name, props) => [
                   `${value} ${t('charts.calls')} (${props.payload.percentage}%)`, 
-                  props.payload.reason
+                  getTranslatedReason(props.payload.reason)
                 ]} 
               />
             </PieChart>
@@ -64,9 +75,12 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 ></div>
                 <span className="text-xs text-gray-700 truncate">
-                  {entry.reason.length > 12 ? 
-                    entry.reason.substring(0, 12) + '...' : 
-                    entry.reason
+                  {(() => {
+                    const translatedReason = getTranslatedReason(entry.reason);
+                    return translatedReason.length > 12 ? 
+                      translatedReason.substring(0, 12) + '...' : 
+                      translatedReason;
+                  })()
                   } ({entry.percentage}%)
                 </span>
               </div>

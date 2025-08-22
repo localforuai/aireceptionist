@@ -74,6 +74,13 @@ const translations = {
     'charts.dailyVolume': 'Daily Volume',
     'charts.calls': 'calls',
     
+    // End Reasons
+    'endReasons.customerHangup': 'Customer Hangup',
+    'endReasons.customerComplete': 'Customer Complete',
+    'endReasons.assistantHangup': 'Assistant Hangup',
+    'endReasons.systemError': 'System Error',
+    'endReasons.timeout': 'Timeout',
+    
     // Call Logs
     'callLogs.title': 'Call Logs',
     'callLogs.searchCalls': 'Search calls...',
@@ -177,6 +184,13 @@ const translations = {
     'charts.endReasons': 'สาเหตุการสิ้นสุด',
     'charts.dailyVolume': 'ปริมาณรายวัน',
     'charts.calls': 'สาย',
+    
+    // End Reasons
+    'endReasons.customerHangup': 'ลูกค้าวางสาย',
+    'endReasons.customerComplete': 'ลูกค้าเสร็จสิ้น',
+    'endReasons.assistantHangup': 'ผู้ช่วยวางสาย',
+    'endReasons.systemError': 'ข้อผิดพลาดระบบ',
+    'endReasons.timeout': 'หมดเวลา',
     
     // Call Logs
     'callLogs.title': 'บันทึกการโทร',

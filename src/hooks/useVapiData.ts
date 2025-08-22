@@ -103,7 +103,7 @@ export const useVapiData = (userId: string | undefined) => {
     }, {} as Record<string, number>);
 
     const endReasons = Object.entries(endReasonCounts).map(([reason, count]) => ({
-      reason: reason.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      reason,
       count,
       percentage: Math.round((count / calls.length) * 100)
     }));
