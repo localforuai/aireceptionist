@@ -3,6 +3,7 @@ import { DashboardHeader } from './DashboardHeader';
 import { MetricsCards } from './MetricsCards';
 import { CallAnalysisCharts } from './CallAnalysisCharts';
 import { CallLogsTable } from './CallLogsTable';
+import { SubscriptionUsage } from './SubscriptionUsage';
 import { ApiSetupBanner } from './ApiSetupBanner';
 import { useAuth } from '../hooks/useAuth';
 import { useVapiData } from '../hooks/useVapiData';
@@ -13,11 +14,14 @@ export const Dashboard: React.FC = () => {
     callData, 
     metrics, 
     chartData, 
+    subscriptionData,
     loading, 
     error, 
     refreshData, 
     useRealData, 
-    toggleDataSource 
+    toggleDataSource,
+    handleTopUp,
+    handleToggleAutoTopUp
   } = useVapiData(user?.id);
 
   if (error) {
@@ -61,6 +65,16 @@ export const Dashboard: React.FC = () => {
         {/* Metrics Overview */}
         {metrics && (
           <MetricsCards metrics={metrics} loading={loading} />
+        )}
+
+        {/* Subscription & Usage */}
+        {subscriptionData && (
+          <SubscriptionUsage 
+            subscriptionData={subscriptionData} 
+            loading={loading}
+            onTopUp={handleTopUp}
+            onToggleAutoTopUp={handleToggleAutoTopUp}
+          />
         )}
 
         {/* Call Analysis Charts */}

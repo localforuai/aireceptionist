@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { CallData, DashboardMetrics, ChartData } from '../types';
+import { CallData, DashboardMetrics, ChartData, SubscriptionData } from '../types';
 import { backendApi } from '../services/backendApi';
 
 export const useVapiData = (userId: string | undefined) => {
   const [callData, setCallData] = useState<CallData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
+  const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useRealData, setUseRealData] = useState(false);
@@ -39,6 +40,28 @@ export const useVapiData = (userId: string | undefined) => {
     }
 
     return mockCalls.sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime());
+  };
+
+  const generateMockSubscriptionData = (totalCallMinutes: number): SubscriptionData => {
+    const totalMinutes = 300; // 300 minutes per month plan
+    const usedMinutes = Math.min(Math.round(totalCallMinutes), totalMinutes);
+    const remainingMinutes = Math.max(0, totalMinutes - usedMinutes);
+    
+    // Set renewal date to first day of next month
+    const renewalDate = new Date();
+    renewalDate.setMonth(renewalDate.getMonth() + 1);
+    renewalDate.setDate(1);
+    
+    return {
+      planName: 'Professional Plan - 300 mins/month',
+      totalMinutes,
+      usedMinutes,
+      remainingMinutes,
+      renewalDate: renewalDate.toISOString(),
+      autoTopUpEnabled: false,
+      topUpMinutes: 100,
+      topUpPrice: 25
+    };
   };
 
   const calculateMetrics = (calls: CallData[]): DashboardMetrics => {
@@ -175,10 +198,12 @@ export const useVapiData = (userId: string | undefined) => {
 
         const calculatedMetrics = calculateMetrics(calls);
         const chartAnalytics = generateChartData(calls);
+        const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
 
         setCallData(calls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
+        setSubscriptionData(subscription);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch call data';
         setError(errorMessage);
@@ -198,11 +223,13 @@ export const useVapiData = (userId: string | undefined) => {
       const mockCalls = generateMockData();
       const calculatedMetrics = calculateMetrics(mockCalls);
       const chartAnalytics = generateChartData(mockCalls);
+      const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
 
       setTimeout(() => {
         setCallData(mockCalls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
+        setSubscriptionData(subscription);
         setLoading(false);
       }, 1000);
     }
@@ -212,14 +239,39 @@ export const useVapiData = (userId: string | undefined) => {
     setUseRealData(!useRealData);
   };
 
+  const handleTopUp = () => {
+    if (subscriptionData) {
+      const updatedSubscription = {
+        ...subscriptionData,
+        remainingMinutes: subscriptionData.remainingMinutes + subscriptionData.topUpMinutes
+      };
+      setSubscriptionData(updatedSubscription);
+      // In a real app, this would trigger Stripe payment flow
+      console.log('Top-up purchased:', subscriptionData.topUpMinutes, 'minutes');
+    }
+  };
+
+  const handleToggleAutoTopUp = (enabled: boolean) => {
+    if (subscriptionData) {
+      setSubscriptionData({
+        ...subscriptionData,
+        autoTopUpEnabled: enabled
+      });
+      console.log('Auto top-up', enabled ? 'enabled' : 'disabled');
+    }
+  };
+
   return { 
     callData, 
     metrics, 
     chartData, 
+    subscriptionData,
     loading, 
     error, 
     refreshData, 
     useRealData, 
-    toggleDataSource 
+    toggleDataSource,
+    handleTopUp,
+    handleToggleAutoTopUp
   };
 };

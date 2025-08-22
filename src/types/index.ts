@@ -34,3 +34,14 @@ export interface ChartData {
   successDistribution: Array<{ range: string; count: number }>;
   dailyCallVolume: Array<{ date: string; calls: number; minutes: number }>;
 }
+
+export interface SubscriptionData {
+  planName: string;
+  totalMinutes: number;
+  usedMinutes: number;
+  remainingMinutes: number;
+  renewalDate: string;
+  autoTopUpEnabled: boolean;
+  topUpMinutes: number;
+  topUpPrice: number;
+}
