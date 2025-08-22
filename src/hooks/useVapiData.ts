@@ -422,7 +422,7 @@ export const useVapiData = (userId: string | undefined) => {
     handleCalendarDisconnect,
     handleSelectCalendar,
     handleChangeSyncMode,
-    handleToggleConflictCheck
+    handleToggleConflictCheck,
     handleSelectTopUpOption
   };
 };
