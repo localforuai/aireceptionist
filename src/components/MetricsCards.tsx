@@ -52,14 +52,14 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
   };
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
       {cards.map((card, index) => (
-        <div key={card.title} className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-4 sm:p-6 border border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-gradient-to-r ${colorClasses[card.color as keyof typeof colorClasses]} flex items-center justify-center`}>
-              <card.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+        <div key={card.title} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 p-3 sm:p-4 border border-gray-100">
+          <div className="flex items-center justify-between mb-2 sm:mb-3">
+            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-r ${colorClasses[card.color as keyof typeof colorClasses]} flex items-center justify-center`}>
+              <card.icon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
-            <span className={`text-sm font-medium px-2 py-1 rounded-full ${
+            <span className={`text-xs font-medium px-2 py-1 rounded-full ${
               card.change.startsWith('+') 
                 ? 'bg-green-100 text-green-700' 
                 : 'bg-red-100 text-red-700'
@@ -69,14 +69,14 @@ export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) 
           </div>
           
           <div className="space-y-1">
-            <p className="text-2xl font-bold text-gray-900">
+            <p className="text-lg sm:text-xl font-bold text-gray-900">
               {loading ? (
-                <div className="h-6 sm:h-8 bg-gray-200 rounded animate-pulse"></div>
+                <div className="h-5 sm:h-6 bg-gray-200 rounded animate-pulse"></div>
               ) : (
                 card.value
               )}
             </p>
-            <p className="text-xs sm:text-sm text-gray-600">{card.title}</p>
+            <p className="text-xs text-gray-600 truncate">{card.title}</p>
             <p className="text-xs text-gray-400 uppercase tracking-wider">{card.unit}</p>
           </div>
         </div>

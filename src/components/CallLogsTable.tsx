@@ -59,21 +59,21 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-gray-100">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+        <div className="p-3 sm:p-4 border-b border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900">Call Logs</h3>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900">Call Logs</h3>
             
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <div className="flex flex-col sm:flex-row gap-2">
               {/* Search */}
               <div className="relative">
-                <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <MagnifyingGlassIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search calls..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="w-full pl-7 pr-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
                 />
               </div>
 
@@ -81,7 +81,7 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="w-full sm:w-auto px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
               >
                 <option value="all">All Status</option>
                 <option value="completed">Completed</option>
@@ -93,7 +93,7 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
               <select
                 value={assistantFilter}
                 onChange={(e) => setAssistantFilter(e.target.value)}
-                className="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="w-full sm:w-auto px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
               >
                 <option value="all">All Assistants</option>
                 {uniqueAssistants.map(assistant => (
@@ -105,68 +105,68 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
         </div>
 
         <div className="overflow-x-auto min-w-0">
-          <table className="w-full min-w-[640px]">
+          <table className="w-full min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date & Time</th>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assistant</th>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Success</th>
-                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assistant</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Success</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {filteredCalls.slice(0, 20).map((call) => (
+              {filteredCalls.slice(0, 10).map((call) => (
                 <tr key={call.id} className="hover:bg-gray-50">
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap">
+                    <div className="text-xs font-medium text-gray-900">
                       {format(new Date(call.startTime), 'MMM d, yyyy')}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-xs text-gray-500">
                       {format(new Date(call.startTime), 'h:mm a')}
                     </div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {call.customerPhone}
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap text-xs text-gray-900">
+                    <div className="truncate max-w-[100px]">{call.customerPhone}</div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {call.assistantName}
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap text-xs text-gray-900">
+                    <div className="truncate max-w-[80px]">{call.assistantName}</div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap text-xs text-gray-900">
                     {formatDuration(call.duration)}
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(call.status)}`}>
-                      {call.status.replace('-', ' ')}
+                      {call.status === 'completed' ? 'Done' : call.status === 'failed' ? 'Failed' : 'Active'}
                     </span>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2 mr-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-1.5 mr-1">
                         <div 
-                          className={`h-2 rounded-full ${call.successRating >= 80 ? 'bg-green-500' : call.successRating >= 60 ? 'bg-yellow-500' : 'bg-red-500'}`}
+                          className={`h-1.5 rounded-full ${call.successRating >= 80 ? 'bg-green-500' : call.successRating >= 60 ? 'bg-yellow-500' : 'bg-red-500'}`}
                           style={{ width: `${call.successRating}%` }}
                         ></div>
                       </div>
-                      <span className="text-sm text-gray-600">{call.successRating}%</span>
+                      <span className="text-xs text-gray-600">{call.successRating}%</span>
                     </div>
                   </td>
-                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <div className="flex items-center space-x-2">
+                  <td className="px-2 sm:px-3 py-2 whitespace-nowrap text-xs text-gray-500">
+                    <div className="flex items-center space-x-1">
                       <button
                         onClick={() => setSelectedCall(call)}
                         className="text-blue-600 hover:text-blue-900 transition-colors"
                         title="View Details"
                       >
-                        <DocumentTextIcon className="h-4 w-4" />
+                        <DocumentTextIcon className="h-3 w-3" />
                       </button>
                       <button
                         className="text-green-600 hover:text-green-900 transition-colors"
                         title="Play Audio"
                       >
-                        <PlayIcon className="h-4 w-4" />
+                        <PlayIcon className="h-3 w-3" />
                       </button>
                     </div>
                   </td>
@@ -176,14 +176,14 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
           </table>
           
           {filteredCalls.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-gray-500">No calls found matching your criteria.</p>
+            <div className="text-center py-8">
+              <p className="text-xs text-gray-500">No calls found.</p>
             </div>
           )}
 
-          {filteredCalls.length > 20 && (
-            <div className="p-4 border-t border-gray-100 text-center">
-              <p className="text-sm text-gray-600">Showing 20 of {filteredCalls.length} calls</p>
+          {filteredCalls.length > 10 && (
+            <div className="p-3 border-t border-gray-100 text-center">
+              <p className="text-xs text-gray-600">Showing 10 of {filteredCalls.length} calls</p>
             </div>
           )}
         </div>

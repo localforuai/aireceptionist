@@ -47,7 +47,7 @@ export const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden">
+    <div className="h-screen bg-gray-50 overflow-hidden flex flex-col">
       <DashboardHeader 
         onRefresh={refreshData} 
         isRefreshing={loading} 
@@ -55,12 +55,15 @@ export const Dashboard: React.FC = () => {
         onToggleDataSource={toggleDataSource}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <main className="flex-1 overflow-y-auto px-2 sm:px-4 py-2 sm:py-4">
+        <div className="max-w-7xl mx-auto space-y-3 sm:space-y-4">
         {/* API Setup Banner */}
-        <ApiSetupBanner 
-          useRealData={useRealData} 
-          onToggleDataSource={toggleDataSource} 
-        />
+        {!useRealData && (
+          <ApiSetupBanner 
+            useRealData={useRealData} 
+            onToggleDataSource={toggleDataSource} 
+          />
+        )}
 
         {/* Metrics Overview */}
         {metrics && (
@@ -84,6 +87,7 @@ export const Dashboard: React.FC = () => {
 
         {/* Call Logs Table */}
         <CallLogsTable callData={callData} loading={loading} />
+        </div>
       </main>
     </div>
   );
