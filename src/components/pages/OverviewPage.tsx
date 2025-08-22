@@ -15,7 +15,8 @@ export const OverviewPage: React.FC = () => {
     callData, 
     loading, 
     handleTopUp, 
-    handleToggleAutoTopUp 
+    handleToggleAutoTopUp,
+    handleSelectTopUpOption
   } = useVapiData(user?.id);
 
   if (loading) {
@@ -173,7 +174,7 @@ export const OverviewPage: React.FC = () => {
                 onClick={handleTopUp}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1 px-2 rounded transition-colors"
               >
-                {t('subscription.buyMinutes').replace('mins', `${subscriptionData.topUpMinutes}`)}
+                {t('subscription.buyMinutes').replace('mins', `${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].minutes}`)}
               </button>
               <button
                 onClick={() => handleToggleAutoTopUp(!subscriptionData.autoTopUpEnabled)}

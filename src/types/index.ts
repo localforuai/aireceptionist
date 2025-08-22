@@ -42,8 +42,8 @@ export interface SubscriptionData {
   remainingMinutes: number;
   renewalDate: string;
   autoTopUpEnabled: boolean;
-  topUpMinutes: number;
-  topUpPrice: number;
+  selectedTopUpOption: number;
+  topUpOptions: Array<{ minutes: number; price: number }>;
 }
 
 export interface CalendarSyncData {

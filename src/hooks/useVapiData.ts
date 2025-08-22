@@ -79,8 +79,12 @@ export const useVapiData = (userId: string | undefined) => {
       remainingMinutes,
       renewalDate: renewalDate.toISOString(),
       autoTopUpEnabled: false,
-      topUpMinutes: 100,
-      topUpPrice: 25
+      selectedTopUpOption: 0,
+      topUpOptions: [
+        { minutes: 100, price: 25 },
+        { minutes: 200, price: 50 },
+        { minutes: 500, price: 100 }
+      ]
     };
   };
 
@@ -314,13 +318,23 @@ export const useVapiData = (userId: string | undefined) => {
 
   const handleTopUp = () => {
     if (subscriptionData) {
+      const selectedOption = subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption];
       const updatedSubscription = {
         ...subscriptionData,
-        remainingMinutes: subscriptionData.remainingMinutes + subscriptionData.topUpMinutes
+        remainingMinutes: subscriptionData.remainingMinutes + selectedOption.minutes
       };
       setSubscriptionData(updatedSubscription);
       // In a real app, this would trigger Stripe payment flow
-      console.log('Top-up purchased:', subscriptionData.topUpMinutes, 'minutes');
+      console.log('Top-up purchased:', selectedOption.minutes, 'minutes for $' + selectedOption.price);
+    }
+  };
+
+  const handleSelectTopUpOption = (optionIndex: number) => {
+    if (subscriptionData) {
+      setSubscriptionData({
+        ...subscriptionData,
+        selectedTopUpOption: optionIndex
+      });
     }
   };
 
@@ -409,5 +423,6 @@ export const useVapiData = (userId: string | undefined) => {
     handleSelectCalendar,
     handleChangeSyncMode,
     handleToggleConflictCheck
+    handleSelectTopUpOption
   };
 };

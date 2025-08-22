@@ -84,6 +84,7 @@ export const Dashboard: React.FC = () => {
             loading={loading}
             onTopUp={handleTopUp}
             onToggleAutoTopUp={handleToggleAutoTopUp}
+            onSelectTopUpOption={handleSelectTopUpOption}
           />
         )}
 

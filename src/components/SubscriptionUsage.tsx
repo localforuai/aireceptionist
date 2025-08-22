@@ -14,13 +14,15 @@ interface SubscriptionUsageProps {
   loading: boolean;
   onTopUp: () => void;
   onToggleAutoTopUp: (enabled: boolean) => void;
+  onSelectTopUpOption: (optionIndex: number) => void;
 }
 
 export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
   subscriptionData,
   loading,
   onTopUp,
-  onToggleAutoTopUp
+  onToggleAutoTopUp,
+  onSelectTopUpOption
 }) => {
   const [showTopUpConfirm, setShowTopUpConfirm] = useState(false);
   const { t } = useLanguage();
@@ -162,9 +164,31 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
           {/* Top-Up Section */}
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3">
             <h4 className="text-xs sm:text-sm font-medium text-green-900 mb-2">{t('subscription.needMore')}</h4>
+            
+            {/* Top-Up Options */}
+            <div className="space-y-2 mb-3">
+              {subscriptionData.topUpOptions.map((option, index) => (
+                <label key={index} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="topUpOption"
+                    checked={subscriptionData.selectedTopUpOption === index}
+                    onChange={() => onSelectTopUpOption(index)}
+                    className="w-3 h-3 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
+                  />
+                  <div className="ml-2 flex-1 flex justify-between items-center">
+                    <span className="text-xs font-medium text-green-700">
+                      {option.minutes} {t('metrics.minutes')}
+                    </span>
+                    <span className="text-xs font-semibold text-green-600">
+                      ${option.price}
+                    </span>
+                  </div>
+                </label>
+              ))}
+            </div>
+            
             <div className="text-center mb-3">
-              <div className="text-lg sm:text-xl font-bold text-green-700">{subscriptionData.topUpMinutes} {t('metrics.minutes')}</div>
-              <div className="text-sm sm:text-lg font-semibold text-green-600">${subscriptionData.topUpPrice}</div>
               <div className="text-xs text-green-600">{t('subscription.oneTime')}</div>
             </div>
             
@@ -174,7 +198,7 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-sm"
               >
                 <PlusIcon className="h-3 w-3 mr-1" />
-                {t('subscription.buyMinutes').replace('mins', `${subscriptionData.topUpMinutes} ${t('metrics.minutes')}`)}
+                {t('subscription.buyMinutes').replace('mins', `${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].minutes} ${t('metrics.minutes')}`)}
               </button>
             ) : (
               <div className="space-y-1">
@@ -214,8 +238,36 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                 <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-600"></div>
               </label>
             </div>
+            
+            {/* Auto Top-Up Options */}
+            <div className="space-y-1 mb-2">
+              {subscriptionData.topUpOptions.map((option, index) => (
+                <label key={index} className="flex items-center cursor-pointer">
+                  <input
+                    type="radio"
+                    name="autoTopUpOption"
+                    checked={subscriptionData.selectedTopUpOption === index}
+                    onChange={() => onSelectTopUpOption(index)}
+                    className="w-3 h-3 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                    disabled={!subscriptionData.autoTopUpEnabled}
+                  />
+                  <div className="ml-2 flex-1 flex justify-between items-center">
+                    <span className={`text-xs ${subscriptionData.autoTopUpEnabled ? 'text-gray-700' : 'text-gray-400'}`}>
+                      {option.minutes} {t('metrics.minutes')}
+                    </span>
+                    <span className={`text-xs font-medium ${subscriptionData.autoTopUpEnabled ? 'text-gray-600' : 'text-gray-400'}`}>
+                      ${option.price}
+                    </span>
+                  </div>
+                </label>
+              ))}
+            </div>
+            
             <p className="text-xs text-gray-600">
-              {t('subscription.autoTopUpDesc').replace('mins', `${subscriptionData.topUpMinutes} ${t('metrics.minutes')}`).replace('$', `$${subscriptionData.topUpPrice}`)}
+              {subscriptionData.autoTopUpEnabled 
+                ? `Auto-buy ${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].minutes} ${t('metrics.minutes')} for $${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].price} when low.`
+                : t('subscription.autoTopUpDesc').replace('mins', `${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].minutes} ${t('metrics.minutes')}`).replace('$', `$${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].price}`)
+              }
             </p>
           </div>
         </div>
