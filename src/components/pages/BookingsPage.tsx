@@ -22,12 +22,12 @@ export const BookingsPage: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Mock bookings data
-  const generateBookings = (date: Date): Booking[] => {
+  const generateBookings = (date: Date, count?: number): Booking[] => {
     const bookings: Booking[] = [];
     const baseDate = startOfDay(date);
     
-    // Generate 3-8 bookings per day
-    const bookingCount = Math.floor(Math.random() * 6) + 3;
+    // Generate more bookings for scrolling demo (8-15 per day)
+    const bookingCount = count || Math.floor(Math.random() * 8) + 8;
     
     for (let i = 0; i < bookingCount; i++) {
       const hour = 9 + Math.floor(Math.random() * 9); // 9 AM to 6 PM
@@ -73,7 +73,7 @@ export const BookingsPage: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex-shrink-0 mb-4">
         <div className="flex items-center justify-between">
@@ -87,9 +87,9 @@ export const BookingsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 overflow-hidden">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-0">
         {/* Week Calendar */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex-shrink-0">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('bookings.thisWeek')}</h3>
             <div className="space-y-1">
@@ -128,8 +128,8 @@ export const BookingsPage: React.FC = () => {
         </div>
 
         {/* Today's Bookings */}
-        <div className="lg:col-span-3">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col">
+        <div className="lg:col-span-3 min-h-0">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col overflow-hidden">
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-900">

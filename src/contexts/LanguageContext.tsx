@@ -131,6 +131,8 @@ const translations = {
     // Bookings
     'bookings.thisWeek': 'This Week',
     'bookings.appointments': 'appointments',
+    'bookings.today': 'Today',
+    'bookings.minutes': 'min',
     'bookings.total': 'total',
     'bookings.confirmed': 'Confirmed',
     'bookings.pending': 'Pending',
@@ -268,6 +270,8 @@ const translations = {
     // Bookings
     'bookings.thisWeek': 'สัปดาห์นี้',
     'bookings.appointments': 'นัดหมาย',
+    'bookings.today': 'วันนี้',
+    'bookings.minutes': 'นาที',
     'bookings.total': 'ทั้งหมด',
     'bookings.confirmed': 'ยืนยันแล้ว',
     'bookings.pending': 'รอดำเนินการ',
