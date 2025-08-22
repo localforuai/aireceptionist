@@ -1,6 +1,7 @@
 import React from 'react';
 import { ClockIcon, PhoneIcon, ChartBarIcon, CheckCircleIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
 import { DashboardMetrics } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface MetricsCardsProps {
   metrics: DashboardMetrics;
@@ -8,35 +9,37 @@ interface MetricsCardsProps {
 }
 
 export const MetricsCards: React.FC<MetricsCardsProps> = ({ metrics, loading }) => {
+  const { t } = useLanguage();
+  
   const cards = [
     {
-      title: 'Total Call Minutes',
+      title: t('metrics.totalCallMinutes'),
       value: loading ? '---' : `${metrics.totalCallMinutes.toLocaleString()}`,
-      unit: 'minutes',
+      unit: t('metrics.minutes'),
       icon: ClockIcon,
       color: 'blue',
       change: '+12.5%'
     },
     {
-      title: 'Total Calls',
+      title: t('metrics.totalCalls'),
       value: loading ? '---' : metrics.totalCalls.toLocaleString(),
-      unit: 'calls',
+      unit: t('metrics.calls'),
       icon: PhoneIcon,
       color: 'teal',
       change: '+8.2%'
     },
     {
-      title: 'Avg Call Duration',
+      title: t('metrics.avgCallDuration'),
       value: loading ? '---' : `${Math.floor(metrics.averageCallDuration / 60)}:${(metrics.averageCallDuration % 60).toString().padStart(2, '0')}`,
-      unit: 'min:sec',
+      unit: t('metrics.minSec'),
       icon: ChartBarIcon,
       color: 'orange',
       change: '-3.1%'
     },
     {
-      title: 'Success Rate',
+      title: t('metrics.successRate'),
       value: loading ? '---' : `${metrics.callSuccessRate}%`,
-      unit: 'success',
+      unit: t('metrics.success'),
       icon: CheckCircleIcon,
       color: 'green',
       change: '+5.4%'

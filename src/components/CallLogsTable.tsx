@@ -3,6 +3,7 @@ import { MagnifyingGlassIcon, FunnelIcon, PlayIcon, DocumentTextIcon } from '@he
 import { CallData } from '../types';
 import { format } from 'date-fns';
 import { CallDetailsModal } from './CallDetailsModal';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface CallLogsTableProps {
   callData: CallData[];
@@ -10,6 +11,7 @@ interface CallLogsTableProps {
 }
 
 export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading }) => {
+  const { t } = useLanguage();
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [assistantFilter, setAssistantFilter] = useState<string>('all');
@@ -62,7 +64,7 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
         <div className="p-3 sm:p-4 border-b border-gray-100">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h3 className="text-sm sm:text-base font-semibold text-gray-900">Call Logs</h3>
+            <h3 className="text-sm sm:text-base font-semibold text-gray-900">{t('callLogs.title')}</h3>
             
             <div className="flex flex-col sm:flex-row gap-2">
               {/* Search */}
@@ -70,7 +72,7 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
                 <MagnifyingGlassIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-gray-400" />
                 <input
                   type="text"
-                  placeholder="Search calls..."
+                  placeholder={t('callLogs.searchCalls')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-7 pr-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
@@ -83,10 +85,10 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
                 onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full sm:w-auto px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
               >
-                <option value="all">All Status</option>
-                <option value="completed">Completed</option>
-                <option value="failed">Failed</option>
-                <option value="in-progress">In Progress</option>
+                <option value="all">{t('callLogs.allStatus')}</option>
+                <option value="completed">{t('callLogs.completed')}</option>
+                <option value="failed">{t('callLogs.failed')}</option>
+                <option value="in-progress">{t('callLogs.inProgress')}</option>
               </select>
 
               {/* Assistant Filter */}
@@ -95,7 +97,7 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
                 onChange={(e) => setAssistantFilter(e.target.value)}
                 className="w-full sm:w-auto px-3 py-1.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-xs"
               >
-                <option value="all">All Assistants</option>
+                <option value="all">{t('callLogs.allAssistants')}</option>
                 {uniqueAssistants.map(assistant => (
                   <option key={assistant} value={assistant}>{assistant}</option>
                 ))}
@@ -108,13 +110,13 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
           <table className="w-full min-w-[600px]">
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assistant</th>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Success</th>
-                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.date')}</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.customer')}</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.assistant')}</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.duration')}</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.status')}</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.success')}</th>
+                <th className="px-2 sm:px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('callLogs.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -139,7 +141,7 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
                   </td>
                   <td className="px-2 sm:px-3 py-2 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(call.status)}`}>
-                      {call.status === 'completed' ? 'Done' : call.status === 'failed' ? 'Failed' : 'Active'}
+                      {call.status === 'completed' ? t('callLogs.done') : call.status === 'failed' ? t('callLogs.failed') : t('callLogs.active')}
                     </span>
                   </td>
                   <td className="px-2 sm:px-3 py-2 whitespace-nowrap">
@@ -158,13 +160,13 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
                       <button
                         onClick={() => setSelectedCall(call)}
                         className="text-blue-600 hover:text-blue-900 transition-colors"
-                        title="View Details"
+                        title={t('callLogs.viewDetails')}
                       >
                         <DocumentTextIcon className="h-3 w-3" />
                       </button>
                       <button
                         className="text-green-600 hover:text-green-900 transition-colors"
-                        title="Play Audio"
+                        title={t('callLogs.playAudio')}
                       >
                         <PlayIcon className="h-3 w-3" />
                       </button>
@@ -177,13 +179,13 @@ export const CallLogsTable: React.FC<CallLogsTableProps> = ({ callData, loading 
           
           {filteredCalls.length === 0 && (
             <div className="text-center py-8">
-              <p className="text-xs text-gray-500">No calls found.</p>
+              <p className="text-xs text-gray-500">{t('callLogs.noCalls')}</p>
             </div>
           )}
 
           {filteredCalls.length > 10 && (
             <div className="p-3 border-t border-gray-100 text-center">
-              <p className="text-xs text-gray-600">Showing 10 of {filteredCalls.length} calls</p>
+              <p className="text-xs text-gray-600">{t('callLogs.showing')} 10 {t('callLogs.of')} {filteredCalls.length} {t('callLogs.calls')}</p>
             </div>
           )}
         </div>

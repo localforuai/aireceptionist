@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthContainer } from './components/auth/AuthContainer';
 import { Dashboard } from './components/Dashboard';
 import { useAuth } from './hooks/useAuth';
@@ -21,23 +22,25 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          {user ? (
-            <>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            </>
-          ) : (
-            <>
-              <Route path="/auth" element={<AuthContainer />} />
-              <Route path="*" element={<Navigate to="/auth" replace />} />
-            </>
-          )}
-        </Routes>
-      </div>
-    </Router>
+    <LanguageProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+            {user ? (
+              <>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              </>
+            ) : (
+              <>
+                <Route path="/auth" element={<AuthContainer />} />
+                <Route path="*" element={<Navigate to="/auth" replace />} />
+              </>
+            )}
+          </Routes>
+        </div>
+      </Router>
+    </LanguageProvider>
   );
 }
 

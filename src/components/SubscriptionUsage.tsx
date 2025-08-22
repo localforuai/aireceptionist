@@ -7,6 +7,7 @@ import {
   CheckCircleIcon
 } from '@heroicons/react/24/outline';
 import { SubscriptionData } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface SubscriptionUsageProps {
   subscriptionData: SubscriptionData;
@@ -22,6 +23,7 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
   onToggleAutoTopUp
 }) => {
   const [showTopUpConfirm, setShowTopUpConfirm] = useState(false);
+  const { t } = useLanguage();
 
   if (loading) {
     return (
@@ -84,8 +86,8 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
             <ClockIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
           <div>
-            <h3 className="text-sm sm:text-lg font-semibold text-gray-900">Subscription</h3>
-            <p className="text-xs text-gray-600 truncate">Professional Plan</p>
+            <h3 className="text-sm sm:text-lg font-semibold text-gray-900">{t('subscription.title')}</h3>
+            <p className="text-xs text-gray-600 truncate">{t('subscription.plan')}</p>
           </div>
         </div>
 
@@ -94,7 +96,7 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
           <div className={`flex items-center px-2 py-1 rounded-lg ${colorClasses[statusColor].bgLight} ${colorClasses[statusColor].border} border`}>
             <ExclamationTriangleIcon className={`h-3 w-3 ${colorClasses[statusColor].text} mr-1`} />
             <span className={`text-xs font-medium ${colorClasses[statusColor].text}`}>
-              Running low on minutes!
+              {t('subscription.runningLow')}
             </span>
           </div>
         )}
@@ -105,9 +107,9 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
         <div className="lg:col-span-2">
           <div className="mb-3">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-xs sm:text-sm font-medium text-gray-700">Usage</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">{t('subscription.usage')}</span>
               <span className="text-xs text-gray-600">
-                {subscriptionData.usedMinutes} / {subscriptionData.totalMinutes} mins
+                {subscriptionData.usedMinutes} / {subscriptionData.totalMinutes} {t('metrics.minutes')}
               </span>
             </div>
             
@@ -124,15 +126,15 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
           <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3 sm:mb-4">
             <div className="text-center p-2 bg-gray-50 rounded-lg">
               <div className="text-lg sm:text-xl font-bold text-gray-900">{subscriptionData.remainingMinutes}</div>
-              <div className="text-xs text-gray-600">Remaining</div>
+              <div className="text-xs text-gray-600">{t('subscription.remaining')}</div>
             </div>
             <div className="text-center p-2 bg-gray-50 rounded-lg">
               <div className="text-lg sm:text-xl font-bold text-gray-900">{subscriptionData.usedMinutes}</div>
-              <div className="text-xs text-gray-600">Used</div>
+              <div className="text-xs text-gray-600">{t('subscription.used')}</div>
             </div>
             <div className="text-center p-2 bg-gray-50 rounded-lg">
               <div className="text-lg sm:text-xl font-bold text-gray-900">{subscriptionData.totalMinutes}</div>
-              <div className="text-xs text-gray-600">Total</div>
+              <div className="text-xs text-gray-600">{t('subscription.total')}</div>
             </div>
           </div>
 
@@ -143,12 +145,12 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                 <CheckCircleIcon className="h-4 w-4 text-blue-600 mt-0.5" />
               </div>
               <div className="ml-2">
-                <h4 className="text-xs sm:text-sm font-medium text-blue-900">Plan Renewal</h4>
+                <h4 className="text-xs sm:text-sm font-medium text-blue-900">{t('subscription.planRenewal')}</h4>
                 <p className="text-xs text-blue-700 mt-1">
-                  Your plan renews on {formatDate(subscriptionData.renewalDate)} with {subscriptionData.totalMinutes} fresh minutes.
+                  {t('subscription.renewsOn')} {formatDate(subscriptionData.renewalDate)} {t('subscription.freshMinutes')}
                 </p>
                 <p className="text-xs text-blue-600 mt-1">
-                  Note: Unused minutes expire and do not roll over to the next month.
+                  {t('subscription.unusedExpire')}
                 </p>
               </div>
             </div>
@@ -159,11 +161,11 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
         <div className="space-y-3">
           {/* Top-Up Section */}
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3">
-            <h4 className="text-xs sm:text-sm font-medium text-green-900 mb-2">Need More?</h4>
+            <h4 className="text-xs sm:text-sm font-medium text-green-900 mb-2">{t('subscription.needMore')}</h4>
             <div className="text-center mb-3">
-              <div className="text-lg sm:text-xl font-bold text-green-700">{subscriptionData.topUpMinutes} mins</div>
+              <div className="text-lg sm:text-xl font-bold text-green-700">{subscriptionData.topUpMinutes} {t('metrics.minutes')}</div>
               <div className="text-sm sm:text-lg font-semibold text-green-600">${subscriptionData.topUpPrice}</div>
-              <div className="text-xs text-green-600">One-time purchase</div>
+              <div className="text-xs text-green-600">{t('subscription.oneTime')}</div>
             </div>
             
             {!showTopUpConfirm ? (
@@ -172,7 +174,7 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center text-sm"
               >
                 <PlusIcon className="h-3 w-3 mr-1" />
-                Buy {subscriptionData.topUpMinutes} mins
+                {t('subscription.buyMinutes').replace('mins', `${subscriptionData.topUpMinutes} ${t('metrics.minutes')}`)}
               </button>
             ) : (
               <div className="space-y-1">
@@ -183,13 +185,13 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
                   }}
                   className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors text-sm"
                 >
-                  Confirm Purchase
+                  {t('subscription.confirmPurchase')}
                 </button>
                 <button
                   onClick={() => setShowTopUpConfirm(false)}
                   className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-3 rounded-lg transition-colors text-sm"
                 >
-                  Cancel
+                  {t('subscription.cancel')}
                 </button>
               </div>
             )}
@@ -200,7 +202,7 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center">
                 <Cog6ToothIcon className="h-3 w-3 text-gray-600 mr-1" />
-                <h4 className="text-xs sm:text-sm font-medium text-gray-900">Auto Top-Up</h4>
+                <h4 className="text-xs sm:text-sm font-medium text-gray-900">{t('subscription.autoTopUp')}</h4>
               </div>
               <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
                 <input
@@ -213,7 +215,7 @@ export const SubscriptionUsage: React.FC<SubscriptionUsageProps> = ({
               </label>
             </div>
             <p className="text-xs text-gray-600">
-              Auto-buy {subscriptionData.topUpMinutes} mins for ${subscriptionData.topUpPrice} when low.
+              {t('subscription.autoTopUpDesc').replace('mins', `${subscriptionData.topUpMinutes} ${t('metrics.minutes')}`).replace('$', `$${subscriptionData.topUpPrice}`)}
             </p>
           </div>
         </div>

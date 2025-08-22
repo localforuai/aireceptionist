@@ -2,6 +2,8 @@ import React from 'react';
 import { ArrowPathIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import { useLanguage } from '../contexts/LanguageContext';
+import { LanguageSelector } from './LanguageSelector';
 
 interface DashboardHeaderProps {
   onRefresh: () => void;
@@ -18,6 +20,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="bg-white border-b border-gray-200 px-2 sm:px-4 py-2 sm:py-3 flex-shrink-0">
@@ -29,12 +32,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             </svg>
           </div>
           <div className="min-w-0">
-            <h1 className="text-sm sm:text-lg font-semibold text-gray-900 truncate">AI Receptionist</h1>
+            <h1 className="text-sm sm:text-lg font-semibold text-gray-900 truncate">{t('header.title')}</h1>
             <p className="text-xs text-gray-600 truncate">{user?.email}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">
+          <LanguageSelector />
+          
           <div className="flex items-center gap-1 sm:gap-2">
             <button
               onClick={onToggleDataSource}
@@ -44,7 +49,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                   : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
               }`}
             >
-              {useRealData ? 'Live' : 'Demo'}
+              {useRealData ? t('header.live') : t('header.demo')}
             </button>
           </div>
 
@@ -65,7 +70,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               onClick={signOut}
               className="inline-flex items-center px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
             >
-              Exit
+              {t('header.exit')}
             </button>
           </div>
         </div>

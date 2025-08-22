@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, LineChart, Line, ResponsiveContainer } from 'recharts';
 import { ChartData } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface CallAnalysisChartsProps {
   chartData: ChartData;
@@ -8,6 +9,7 @@ interface CallAnalysisChartsProps {
 }
 
 export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartData, loading }) => {
+  const { t } = useLanguage();
   const COLORS = ['#2563eb', '#0d9488', '#ea580c', '#dc2626', '#7c3aed', '#059669'];
 
   if (loading) {
@@ -27,7 +29,7 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
       {/* Call End Reasons */}
       <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-100">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">End Reasons</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">{t('charts.endReasons')}</h3>
         <div className="flex flex-col lg:flex-row items-center gap-4">
           <ResponsiveContainer width="100%" height={120} className="lg:w-2/3">
             <PieChart>
@@ -46,7 +48,7 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
               </Pie>
               <Tooltip 
                 formatter={(value, name, props) => [
-                  `${value} calls (${props.payload.percentage}%)`, 
+                  `${value} ${t('charts.calls')} (${props.payload.percentage}%)`, 
                   props.payload.reason
                 ]} 
               />
@@ -75,7 +77,7 @@ export const CallAnalysisCharts: React.FC<CallAnalysisChartsProps> = ({ chartDat
 
       {/* Daily Call Volume */}
       <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4 border border-gray-100">
-        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">Daily Volume</h3>
+        <h3 className="text-sm sm:text-base font-semibold text-gray-900 mb-2 sm:mb-3">{t('charts.dailyVolume')}</h3>
         <ResponsiveContainer width="100%" height={120}>
           <LineChart data={chartData.dailyCallVolume}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
