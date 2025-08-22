@@ -73,7 +73,7 @@ export const BookingsPage: React.FC = () => {
   }
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col overflow-hidden">
       {/* Header */}
       <div className="flex-shrink-0 mb-4">
         <div className="flex items-center justify-between">
@@ -87,9 +87,9 @@ export const BookingsPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-4 gap-4 overflow-hidden">
         {/* Week Calendar */}
-        <div className="lg:col-span-1 flex-shrink-0">
+        <div className="lg:col-span-1 flex-shrink-0 overflow-hidden">
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-3">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('bookings.thisWeek')}</h3>
             <div className="space-y-1">
@@ -128,8 +128,8 @@ export const BookingsPage: React.FC = () => {
         </div>
 
         {/* Today's Bookings */}
-        <div className="lg:col-span-3 min-h-0">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col overflow-hidden">
+        <div className="lg:col-span-3 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-100 h-full flex flex-col">
             <div className="p-4 border-b border-gray-100">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-900">
@@ -141,7 +141,7 @@ export const BookingsPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto min-h-0">
               <div className="divide-y divide-gray-100">
                 {todayBookings.map((booking) => (
                   <div key={booking.id} className="p-4 hover:bg-gray-50 transition-colors">
@@ -193,7 +193,7 @@ export const BookingsPage: React.FC = () => {
               </div>
               
               {todayBookings.length === 0 && (
-                <div className="flex-1 flex items-center justify-center py-12">
+                <div className="flex items-center justify-center py-12">
                   <div className="text-center">
                     <CalendarIcon className="w-12 h-12 text-gray-300 mx-auto mb-4" />
                     <p className="text-sm text-gray-500">{t('bookings.noBookings')}</p>
