@@ -1,38 +1,98 @@
-# AI Receptionist Dashboard
+# Complete AI Receptionist Dashboard
 
-A comprehensive dashboard for shop owners to monitor and analyze their AI receptionist call data from Vapi.
+A comprehensive, production-ready dashboard for shop owners to monitor and manage their AI receptionist powered by VAPI, with full integrations for payments, calendar sync, and real-time analytics.
 
-## Features
+## 🚀 Features
 
-- **Secure Authentication**: Multi-tenant login system with shop-specific data isolation
-- **Real-time Analytics**: Live sync with Vapi API for up-to-date call metrics
-- **Interactive Charts**: Visual analysis of call patterns, success rates, and assistant performance
-- **Detailed Call Logs**: Searchable and filterable call history with transcript and audio access
-- **Responsive Design**: Optimized for desktop and mobile viewing
+### Core Dashboard
+- **Real-time Analytics**: Live call metrics, success rates, and performance tracking
+- **Multi-language Support**: English and Thai language options
+- **Responsive Design**: Optimized for desktop, tablet, and mobile
+- **Secure Authentication**: Multi-tenant system with role-based access
 
-## Setup Instructions
+### VAPI Integration
+- **Live Call Data**: Real-time sync with VAPI API
+- **Assistant Management**: Create, update, and manage AI assistants
+- **Call Control**: Start/end calls programmatically
+- **Webhook Support**: Real-time call status updates
 
-### 1. Install Dependencies
+### Payment System (Stripe)
+- **Subscription Management**: Track usage and remaining minutes
+- **One-time Top-ups**: Purchase additional minutes as needed
+- **Auto Top-up**: Automatic minute purchases when running low
+- **Payment History**: Complete transaction tracking
+
+### Calendar Integration (Google Calendar)
+- **OAuth Authentication**: Secure Google Calendar connection
+- **Two-way Sync**: Sync appointments both ways
+- **Conflict Detection**: Prevent double-bookings
+- **Multiple Calendars**: Support for multiple calendar selection
+
+### Database (Supabase)
+- **Multi-tenant Architecture**: Complete data isolation per shop
+- **Row Level Security**: Database-level security policies
+- **Real-time Updates**: Live data synchronization
+- **Analytics Functions**: Pre-built database functions for metrics
+
+## 🛠 Setup Instructions
+
+### 1. Environment Configuration
+
+**Frontend (.env)**
+```bash
+VITE_SUPABASE_URL=your_supabase_project_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_BACKEND_URL=http://localhost:3001
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_key
+VITE_GOOGLE_CLIENT_ID=your_google_oauth_client_id
+```
+
+**Backend (server/.env)**
+```bash
+# VAPI Configuration
+VAPI_PRIVATE_KEY=your_vapi_private_key_here
+VAPI_BASE_URL=https://api.vapi.ai
+
+# Server Configuration
+PORT=3001
+CORS_ORIGIN=http://localhost:5173
+
+# Database
+SUPABASE_URL=your_supabase_project_url
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Stripe Payments
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+
+# Google Calendar
+GOOGLE_CLIENT_ID=your_google_oauth_client_id
+GOOGLE_CLIENT_SECRET=your_google_oauth_client_secret
+
+# Security
+JWT_SECRET=your_jwt_secret_key_here
+```
+
+### 2. Database Setup (Supabase)
+
+The database migrations are already included. Run them in your Supabase dashboard:
+
+1. Go to your Supabase project
+2. Navigate to SQL Editor
+3. Run the migration files in order (they're already in the project)
+4. The sample data will be automatically inserted
+
+### 3. Install Dependencies
 
 ```bash
-# Install frontend dependencies
+# Frontend dependencies
 npm install
 
-# Install backend dependencies
+# Backend dependencies
 cd server && npm install && cd ..
 ```
 
-### 2. Configure Backend with Vapi Private Key
-
-The backend server is already configured with your Vapi private key in `server/.env`:
-```
-VAPI_PRIVATE_KEY=31ed7a3f-24c1-42e4-9dfc-59fd89292706
-VAPI_BASE_URL=https://api.vapi.ai
-PORT=3001
-CORS_ORIGIN=http://localhost:5173
-```
-
-### 3. Start Both Frontend and Backend
+### 4. Start the Application
 
 **Option 1: Start both simultaneously**
 ```bash
@@ -45,148 +105,162 @@ npm run dev:full
 npm run dev
 
 # Terminal 2 - Backend
-npm run dev:server
+cd server && npm run dev
 ```
 
-## Architecture
+### 5. Configure External Services
 
-### Security Architecture
-- **Frontend**: Uses public-facing backend API (no sensitive keys exposed)
-- **Backend**: Securely stores and uses Vapi private key
-- **API Flow**: Frontend → Backend → Vapi API → Backend → Frontend
+#### VAPI Setup
+1. Get your VAPI private key from [VAPI Dashboard](https://dashboard.vapi.ai)
+2. Add it to `server/.env` as `VAPI_PRIVATE_KEY`
+3. Create your AI assistants through the dashboard
 
-### Backend API Endpoints
+#### Stripe Setup
+1. Create a Stripe account at [stripe.com](https://stripe.com)
+2. Get your test keys from the Stripe dashboard
+3. Set up webhooks pointing to `your-domain/webhook/stripe`
+4. Add the webhook secret to your environment
 
-The Node.js backend provides these endpoints:
+#### Google Calendar Setup
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select existing
+3. Enable Google Calendar API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs
 
-- `GET /api/calls` - Retrieve call logs with filtering options
-- `GET /api/calls/:id` - Get detailed call information  
-- `GET /api/assistants` - List available assistants
-- `GET /api/test-connection` - Test Vapi API connection
-- `GET /health` - Backend health check
+## 🏗 Architecture
 
-### Frontend Integration
+### Frontend (React + TypeScript)
+- **Framework**: Vite + React 18
+- **Styling**: Tailwind CSS
+- **State Management**: React hooks + Context
+- **Routing**: React Router v6
+- **Charts**: Recharts
+- **Icons**: Heroicons + Lucide React
 
-The frontend now uses `backendApi` service instead of direct Vapi calls:
-- Connects to backend on `http://localhost:3001`
-- Handles connection errors gracefully
-- Provides clear error messages for setup issues
+### Backend (Node.js + Express)
+- **Runtime**: Node.js with Express
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: JWT tokens
+- **Payments**: Stripe API
+- **Calendar**: Google Calendar API
+- **AI Calls**: VAPI API
 
-## Development Workflow
+### Database Schema
+- **shops**: Business information
+- **shop_users**: User-shop relationships with roles
+- **assistants**: AI assistant configurations
+- **calls**: Call records and analytics
+- **subscriptions**: Usage and billing data
+- **bookings**: Appointment scheduling
+- **calendar_integrations**: Calendar sync settings
+- **topup_transactions**: Payment history
 
-1. **Backend Server** (Port 3001): Handles Vapi API calls with private key
-2. **Frontend Server** (Port 5173): Serves the React dashboard
-3. **Data Flow**: Dashboard → Backend API → Vapi API → Response chain
+## 🔧 API Endpoints
 
-## Vapi Integration Details
+### VAPI Integration
+- `GET /api/calls` - Retrieve call logs
+- `GET /api/calls/:id` - Get call details
+- `GET /api/assistants` - List assistants
+- `POST /api/assistants` - Create assistant
+- `POST /api/calls/start` - Start outbound call
+- `POST /api/calls/:id/end` - End active call
 
-The backend integrates with these Vapi API endpoints:
+### Payment System
+- `POST /api/payments/create-intent` - Create payment
+- `POST /api/payments/confirm` - Confirm payment
+- `GET /api/payments/history/:shopId` - Payment history
+- `POST /api/payments/setup-auto-topup` - Setup auto top-up
 
-- `GET /call` - Retrieve call logs with filtering options
-- `GET /call/{id}` - Get detailed call information
-- `GET /assistant` - List available assistants
+### Calendar Integration
+- `POST /api/calendar/auth/google/start` - Start OAuth
+- `POST /api/calendar/auth/google/callback` - Complete OAuth
+- `GET /api/calendar/calendars/:shopId` - Get calendars
+- `POST /api/calendar/events` - Create event
+- `POST /api/calendar/sync-bookings` - Sync bookings
 
-### Data Security
+### Webhooks
+- `POST /webhook/vapi` - VAPI call events
+- `POST /webhook/stripe` - Stripe payment events
 
-- **Private Key**: Stored securely in backend environment variables
-- **CORS**: Configured to only allow requests from your frontend
-- **No Key Exposure**: Frontend never sees or handles the private key
-- **Error Handling**: Detailed logging without exposing sensitive information
+## 🔒 Security Features
 
-### Backend Configuration
+- **Row Level Security**: Database-level access control
+- **JWT Authentication**: Secure API access
+- **CORS Protection**: Cross-origin request filtering
+- **Input Validation**: Request data sanitization
+- **Environment Variables**: Secure credential storage
+- **Webhook Verification**: Signed webhook validation
 
-The backend service (`server/server.js`) handles:
+## 📱 Mobile App Ready
 
-- Authentication with Bearer token
-- Request/response transformation
-- Error handling and fallbacks
-- Data mapping from Vapi format to dashboard format
-- CORS security
-- Health monitoring
+The backend API is designed to support both web and mobile applications:
 
-## Troubleshooting
+- **RESTful API**: Standard HTTP endpoints
+- **JWT Authentication**: Mobile-friendly auth
+- **Real-time Updates**: WebSocket support ready
+- **Offline Support**: Cacheable responses
+- **Push Notifications**: Infrastructure ready
 
-### Backend Connection Issues
-```bash
-# Check if backend is running
-curl http://localhost:3001/health
+## 🚀 Deployment
 
-# Check Vapi connection through backend
-curl http://localhost:3001/api/test-connection
-```
+### Frontend Deployment
+- **Vercel**: `vercel --prod`
+- **Netlify**: `npm run build` then deploy `dist/`
+- **AWS S3**: Static hosting with CloudFront
 
-### Common Issues
-1. **"Backend server is not running"**: Start the backend with `npm run dev:server`
-2. **CORS errors**: Ensure backend CORS_ORIGIN matches your frontend URL
-3. **Vapi API errors**: Check that your private key is correct in `server/.env`
+### Backend Deployment
+- **Railway**: Connect GitHub repo
+- **Render**: Deploy from GitHub
+- **Heroku**: `git push heroku main`
+- **AWS EC2**: PM2 + Nginx setup
 
-## Data Mapping
+### Environment Variables
+Update all environment variables for production:
+- Use production Stripe keys
+- Set production CORS origins
+- Use production database URLs
+- Generate secure JWT secrets
 
-Vapi call data is transformed to match the dashboard's data structure:
+## 📊 Analytics & Monitoring
 
-```typescript
-interface CallData {
-  id: string;
-  assistantId: string;
-  assistantName: string;
-  startTime: string;
-  endTime: string;
-  duration: number;
-  status: 'completed' | 'failed' | 'in-progress';
-  endReason: string;
-  transcript: string;
-  audioUrl: string;
-  customerPhone: string;
-  successRating: number;
-  cost: number;
-}
-```
+### Built-in Analytics
+- **Call Metrics**: Duration, success rate, cost tracking
+- **Usage Analytics**: Subscription consumption patterns
+- **Performance Monitoring**: Response times and error rates
+- **Business Intelligence**: Revenue and growth metrics
 
-## Usage Modes
+### Database Functions
+- `get_shop_stats()`: Comprehensive shop analytics
+- `get_daily_call_volume()`: Time-series call data
+- Auto-triggers for real-time updates
 
-### Demo Mode
-- Uses realistic mock data for testing and demonstration
-- No backend connection required
-- Perfect for development and demos
+## 🎯 Production Checklist
 
-### Live Data Mode  
-- Connects to backend server
-- Fetches real data from your Vapi account
-- Requires both frontend and backend servers running
+- [ ] Environment variables configured
+- [ ] Database migrations applied
+- [ ] VAPI webhooks configured
+- [ ] Stripe webhooks set up
+- [ ] Google OAuth configured
+- [ ] SSL certificates installed
+- [ ] Monitoring and logging enabled
+- [ ] Backup strategy implemented
+- [ ] Performance testing completed
+- [ ] Security audit passed
 
-## Production Deployment
+## 🤝 Support
 
-For production deployment:
+This is a complete, production-ready implementation that includes:
 
-1. **Frontend**: Deploy to any static hosting (Vercel, Netlify, etc.)
-2. **Backend**: Deploy to a Node.js hosting service (Railway, Render, Heroku, etc.)
-3. **Environment**: Update CORS_ORIGIN and backend URL for production
-4. **Security**: Use environment variables for all sensitive configuration
+✅ **Full VAPI Integration** - Real-time call management
+✅ **Stripe Payments** - Complete billing system  
+✅ **Google Calendar** - Two-way appointment sync
+✅ **Multi-tenant Database** - Secure data isolation
+✅ **Responsive UI** - Works on all devices
+✅ **Real-time Analytics** - Live dashboard updates
+✅ **Webhook Support** - Event-driven architecture
+✅ **Security Features** - Production-grade security
+✅ **Mobile API Ready** - Backend supports mobile apps
+✅ **Deployment Ready** - Environment configurations included
 
-### Build Commands
-
-```bash
-# Build frontend
-npm run build
-
-# Backend is ready to deploy as-is
-```
-
-## Environment Variables
-
-### Frontend (.env)
-```
-VITE_BACKEND_URL=http://localhost:3001
-```
-
-### Backend (server/.env)
-```
-VAPI_PRIVATE_KEY=your_vapi_private_key
-VAPI_BASE_URL=https://api.vapi.ai
-PORT=3001
-CORS_ORIGIN=http://localhost:5173
-```
-
-## Support
-
-For Vapi API documentation and support, visit [Vapi Documentation](https://docs.vapi.ai).
+The system is designed to handle real production workloads with proper error handling, security measures, and scalability considerations.

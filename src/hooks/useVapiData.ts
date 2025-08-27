@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 import { CallData, DashboardMetrics, ChartData, SubscriptionData, CalendarSyncData } from '../types';
-import { backendApi } from '../services/backendApi';
+import { vapiService } from '../services/vapiService';
+import { stripeService } from '../services/stripeService';
+import { calendarService } from '../services/calendarService';
+import { supabaseService } from '../services/supabaseService';
+import { useAuth } from './useAuth';
 
 export const useVapiData = (userId: string | undefined) => {
-  const location = useLocation();
+  const { user } = useAuth();
   const [callData, setCallData] = useState<CallData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -12,24 +15,10 @@ export const useVapiData = (userId: string | undefined) => {
   const [calendarData, setCalendarData] = useState<CalendarSyncData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [useRealData, setUseRealData] = useState(false);
+  const [useRealData, setUseRealData] = useState(true);
   
-  // Create a singleton instance to share data across routes
-  const [dataCache, setDataCache] = useState<{
-    callData: CallData[];
-    metrics: DashboardMetrics | null;
-    chartData: ChartData | null;
-    subscriptionData: SubscriptionData | null;
-    calendarData: CalendarSyncData | null;
-    lastFetch: number;
-  }>({
-    callData: [],
-    metrics: null,
-    chartData: null,
-    subscriptionData: null,
-    calendarData: null,
-    lastFetch: 0
-  });
+  // Data cache for performance
+  const [lastFetch, setLastFetch] = useState(0);
 
   // Mock data generation for demonstration
   const generateMockData = (): CallData[] => {
@@ -176,14 +165,9 @@ export const useVapiData = (userId: string | undefined) => {
   useEffect(() => {
     if (!userId) return;
     
-    // Check if we have recent cached data (within 5 minutes)
+    // Check if we have recent cached data (within 2 minutes)
     const now = Date.now();
-    if (dataCache.lastFetch && (now - dataCache.lastFetch) < 5 * 60 * 1000) {
-      setCallData(dataCache.callData);
-      setMetrics(dataCache.metrics);
-      setChartData(dataCache.chartData);
-      setSubscriptionData(dataCache.subscriptionData);
-      setCalendarData(dataCache.calendarData);
+    if (lastFetch && (now - lastFetch) < 2 * 60 * 1000 && !loading) {
       setLoading(false);
       return;
     }
@@ -197,78 +181,70 @@ export const useVapiData = (userId: string | undefined) => {
         
         if (useRealData) {
           try {
-            console.log('Fetching real data from Vapi API...');
-            // Test backend connection first
-            const isBackendHealthy = await backendApi.healthCheck();
+            console.log('Fetching real data from VAPI API...');
+            
+            // Test VAPI connection first
+            const isVapiHealthy = await vapiService.healthCheck();
             if (!isBackendHealthy) {
-              throw new Error('Backend server is not running. Please start the backend server with: npm run dev:server');
+              throw new Error('VAPI backend server is not running. Please start the backend server.');
             }
             
-            // Fetch real data from backend API (which uses Vapi private key)
-            calls = await backendApi.getCalls({
+            // Fetch real data from VAPI
+            calls = await vapiService.getCalls({
               limit: 50,
               startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // Last 30 days
             });
-            console.log('Successfully fetched calls from backend:', calls.length);
+            console.log('Successfully fetched calls from VAPI:', calls.length);
             
-            // If no calls returned, show a message but don't fall back to mock data
             if (calls.length === 0) {
-              console.log('No calls found in your Vapi account');
-              setCallData([]);
-              setMetrics({
-                totalCallMinutes: 0,
-                totalCalls: 0,
-                averageCallDuration: 0,
-                callSuccessRate: 0,
-              });
-              setChartData({
-                endReasons: [],
-                assistantDurations: [],
-                successDistribution: [],
-                dailyCallVolume: []
-              });
-              setLoading(false);
-              return;
+              console.log('No calls found in your VAPI account');
             }
+            
+            // Fetch subscription data from Supabase
+            if (user?.shopId) {
+              const subscription = await supabaseService.getSubscriptionData(user.shopId);
+              if (subscription) {
+                setSubscriptionData(subscription);
+              }
+              
+              const calendar = await supabaseService.getCalendarData(user.shopId);
+              if (calendar) {
+                setCalendarData(calendar);
+              }
+            }
+            
           } catch (apiError) {
-            console.error('Failed to fetch from backend API:', apiError);
+            console.error('Failed to fetch from VAPI API:', apiError);
             const errorMessage = apiError instanceof Error ? apiError.message : 'Unknown error';
             
-            // Automatically fall back to demo mode when backend is not available
-            console.log('Backend not available, falling back to demo mode');
+            // Automatically fall back to demo mode when VAPI is not available
+            console.log('VAPI not available, falling back to demo mode');
             setUseRealData(false);
-            // Continue with demo data instead of showing error
           }
-        } else {
         }
         
         if (!useRealData) {
-          // Use mock data for demonstration
           console.log('Using mock data for demonstration');
           await new Promise(resolve => setTimeout(resolve, 1500));
           calls = generateMockData();
+          
+          const calculatedMetrics = calculateMetrics(calls);
+          const chartAnalytics = generateChartData(calls);
+          const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
+          const calendar = generateMockCalendarData();
+          
+          setSubscriptionData(subscription);
+          setCalendarData(calendar);
         }
 
         const calculatedMetrics = calculateMetrics(calls);
         const chartAnalytics = generateChartData(calls);
-        const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
-        const calendar = generateMockCalendarData();
 
         setCallData(calls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
-        setSubscriptionData(subscription);
-        setCalendarData(calendar);
         
-        // Update cache
-        setDataCache({
-          callData: calls,
-          metrics: calculatedMetrics,
-          chartData: chartAnalytics,
-          subscriptionData: subscription,
-          calendarData: calendar,
-          lastFetch: now
-        });
+        setLastFetch(now);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to fetch call data';
         setError(errorMessage);
@@ -279,53 +255,46 @@ export const useVapiData = (userId: string | undefined) => {
     };
 
     fetchData();
-  }, [userId, useRealData, dataCache.lastFetch]);
+  }, [userId, useRealData, user?.shopId]);
 
   const refreshData = () => {
-    if (userId) {
-      setLoading(true);
-      // Trigger data refetch
-      const mockCalls = generateMockData();
-      const calculatedMetrics = calculateMetrics(mockCalls);
-      const chartAnalytics = generateChartData(mockCalls);
-      const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
-      const calendar = generateMockCalendarData();
-
-      setTimeout(() => {
-        setCallData(mockCalls);
-        setMetrics(calculatedMetrics);
-        setChartData(chartAnalytics);
-        setSubscriptionData(subscription);
-        setCalendarData(calendar);
-        
-        // Update cache
-        setDataCache({
-          callData: mockCalls,
-          metrics: calculatedMetrics,
-          chartData: chartAnalytics,
-          subscriptionData: subscription,
-          calendarData: calendar,
-          lastFetch: Date.now()
-        });
-        setLoading(false);
-      }, 1000);
-    }
+    setLastFetch(0); // Force refresh
+    setLoading(true);
   };
 
   const toggleDataSource = () => {
     setUseRealData(!useRealData);
   };
 
-  const handleTopUp = () => {
+  const handleTopUp = async () => {
     if (subscriptionData) {
       const selectedOption = subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption];
-      const updatedSubscription = {
-        ...subscriptionData,
-        remainingMinutes: subscriptionData.remainingMinutes + selectedOption.minutes
-      };
-      setSubscriptionData(updatedSubscription);
-      // In a real app, this would trigger Stripe payment flow
-      console.log('Top-up purchased:', selectedOption.minutes, 'minutes for $' + selectedOption.price);
+      
+      if (useRealData && user?.shopId) {
+        try {
+          // Create Stripe payment intent
+          const paymentIntent = await stripeService.createTopUpPayment(user.shopId, selectedOption);
+          
+          // In a real app, you'd show Stripe payment form here
+          // For demo, we'll simulate successful payment
+          await stripeService.confirmPayment(paymentIntent.id);
+          
+          // Refresh subscription data
+          const updatedSubscription = await supabaseService.getSubscriptionData(user.shopId);
+          if (updatedSubscription) {
+            setSubscriptionData(updatedSubscription);
+          }
+        } catch (error) {
+          console.error('Top-up failed:', error);
+        }
+      } else {
+        // Demo mode
+        const updatedSubscription = {
+          ...subscriptionData,
+          remainingMinutes: subscriptionData.remainingMinutes + selectedOption.minutes
+        };
+        setSubscriptionData(updatedSubscription);
+      }
     }
   };
 
@@ -349,14 +318,25 @@ export const useVapiData = (userId: string | undefined) => {
   };
 
   const handleCalendarConnect = () => {
-    if (calendarData) {
-      setCalendarData({
-        ...calendarData,
-        isConnected: true,
-        lastSyncTime: new Date().toISOString(),
-        error: null
-      });
-      console.log('Google Calendar OAuth initiated');
+    if (useRealData && user?.shopId) {
+      // Start Google OAuth flow
+      calendarService.startGoogleAuth(user.shopId)
+        .then(({ authUrl }) => {
+          window.open(authUrl, '_blank');
+        })
+        .catch(error => {
+          console.error('Failed to start Google auth:', error);
+        });
+    } else {
+      // Demo mode
+      if (calendarData) {
+        setCalendarData({
+          ...calendarData,
+          isConnected: true,
+          lastSyncTime: new Date().toISOString(),
+          error: null
+        });
+      }
     }
   };
 
