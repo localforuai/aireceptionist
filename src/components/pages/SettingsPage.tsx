@@ -69,240 +69,6 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <div className="h-full overflow-y-auto space-y-6">
-      {/* Stripe Integration */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center">
-            <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mr-3">
-              <CreditCardIcon className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">Stripe Integration</h3>
-              <p className="text-sm text-gray-600">Connect Stripe to process subscription payments</p>
-            </div>
-          </div>
-
-          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-            stripeData?.isConnected 
-              ? 'bg-green-100 text-green-700' 
-              : 'bg-gray-100 text-gray-700'
-          }`}>
-            {stripeData?.isConnected ? (
-              <>
-                <CheckCircleIcon className="w-4 h-4 mr-1" />
-                Connected
-              </>
-            ) : (
-              'Not Connected'
-            )}
-          </span>
-        </div>
-
-        {/* Error Display */}
-        {stripeData?.error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <div className="flex items-start">
-              <ExclamationTriangleIcon className="h-4 w-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
-              <p className="text-sm text-red-700">{stripeData.error}</p>
-            </div>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Connection & Account Info */}
-          <div className="space-y-4">
-            {!stripeData?.isConnected ? (
-              <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0">
-                      <ShieldCheckIcon className="h-5 w-5 text-blue-600 mt-0.5" />
-                    </div>
-                    <div className="ml-3">
-                      <h4 className="text-sm font-medium text-blue-900">Secure Payment Processing</h4>
-                      <p className="text-sm text-blue-700 mt-1">
-                        Connect your Stripe account to securely process subscription payments and top-ups. 
-                        Your financial data is handled directly by Stripe - we never store payment information.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={handleStripeConnect}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-                >
-                  <LinkIcon className="h-4 w-4 mr-2" />
-                  Connect with Stripe
-                </button>
-                
-                <div className="text-xs text-gray-500 space-y-1">
-                  <p>• Secure OAuth connection</p>
-                  <p>• No sensitive data stored on our servers</p>
-                  <p>• Full control over your Stripe account</p>
-                  <p>• Disconnect anytime</p>
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {/* Account Details */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Account Details</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Account ID:</span>
-                      <span className="font-mono text-gray-900">{stripeData.accountId}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Business Email:</span>
-                      <span className="text-gray-900">{stripeData.accountEmail}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Business Name:</span>
-                      <span className="text-gray-900">{stripeData.accountName}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Account Status */}
-                <div className="bg-gray-50 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-gray-900 mb-3">Account Status</h4>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Charges Enabled:</span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        stripeData.chargesEnabled 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}>
-                        {stripeData.chargesEnabled ? 'Yes' : 'No'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Payouts Enabled:</span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        stripeData.payoutsEnabled 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}>
-                        {stripeData.payoutsEnabled ? 'Yes' : 'No'}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">Details Submitted:</span>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        stripeData.detailsSubmitted 
-                          ? 'bg-green-100 text-green-700' 
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {stripeData.detailsSubmitted ? 'Complete' : 'Pending'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Disconnect Button */}
-                {!showStripeDisconnectConfirm ? (
-                  <button
-                    onClick={() => setShowStripeDisconnectConfirm(true)}
-                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Disconnect Stripe
-                  </button>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                      <p className="text-sm text-yellow-800">
-                        <strong>Warning:</strong> Disconnecting Stripe will disable automatic payments and top-ups. 
-                        Customers won't be able to purchase additional minutes until reconnected.
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => {
-                          handleStripeDisconnect();
-                          setShowStripeDisconnectConfirm(false);
-                        }}
-                        className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-                      >
-                        Confirm Disconnect
-                      </button>
-                      <button
-                        onClick={() => setShowStripeDisconnectConfirm(false)}
-                        className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Features & Benefits */}
-          <div className="space-y-4">
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4">
-              <h4 className="text-sm font-medium text-purple-900 mb-3">Payment Features</h4>
-              <div className="space-y-2 text-sm text-purple-700">
-                <div className="flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-purple-600" />
-                  <span>Automatic subscription billing</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-purple-600" />
-                  <span>One-time minute top-ups</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-purple-600" />
-                  <span>Auto top-up when running low</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-purple-600" />
-                  <span>Secure payment processing</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircleIcon className="w-4 h-4 mr-2 text-purple-600" />
-                  <span>Detailed transaction history</span>
-                </div>
-              </div>
-            </div>
-
-            {stripeData?.lastConnected && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-900">Last Connected</span>
-                  <ClockIcon className="w-4 h-4 text-gray-400" />
-                </div>
-                <p className="text-sm text-gray-600">
-                  {new Date(stripeData.lastConnected).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </p>
-              </div>
-            )}
-
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-              <div className="flex items-start">
-                <div className="flex-shrink-0">
-                  <ShieldCheckIcon className="h-4 w-4 text-blue-600 mt-0.5" />
-                </div>
-                <div className="ml-2">
-                  <p className="text-xs text-blue-700">
-                    <strong>Security:</strong> All payment data is processed securely by Stripe. 
-                    We never store credit card information or sensitive financial data.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       {/* Google Calendar Sync */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
         <div className="flex items-center justify-between mb-6">
@@ -591,6 +357,123 @@ export const SettingsPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Stripe Integration */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 flex items-center justify-center mr-3">
+              <CreditCardIcon className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900">Stripe Integration</h3>
+              <p className="text-sm text-gray-600">Connect Stripe to process subscription payments</p>
+            </div>
+          </div>
+
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+            stripeData?.isConnected 
+              ? 'bg-green-100 text-green-700' 
+              : 'bg-gray-100 text-gray-700'
+          }`}>
+            {stripeData?.isConnected ? (
+              <>
+                <CheckCircleIcon className="w-4 h-4 mr-1" />
+                Connected
+              </>
+            ) : (
+              'Not Connected'
+            )}
+          </span>
+        </div>
+
+        {/* Error Display */}
+        {stripeData?.error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-start">
+              <ExclamationTriangleIcon className="h-4 w-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+              <p className="text-sm text-red-700">{stripeData.error}</p>
+            </div>
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Connection & Account Info */}
+          <div className="space-y-4">
+            {!stripeData?.isConnected ? (
+              <div className="space-y-4">
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0">
+                      <ShieldCheckIcon className="h-5 w-5 text-blue-600 mt-0.5" />
+                    </div>
+                    <div className="ml-3">
+                      <h4 className="text-sm font-medium text-blue-900">Secure Payment Processing</h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Connect your Stripe account to securely process subscription payments and top-ups. 
+                        Your financial data is handled directly by Stripe - we never store payment information.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <button
+                  onClick={handleStripeConnect}
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+                >
+                  <LinkIcon className="h-4 w-4 mr-2" />
+                  Connect with Stripe
+                </button>
+                
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>• Secure OAuth connection</p>
+                  <p>• No sensitive data stored on our servers</p>
+                  <p>• Full control over your Stripe account</p>
+                  <p>• Disconnect anytime</p>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {/* Account Details */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Account Details</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Account ID:</span>
+                      <span className="font-mono text-gray-900">{stripeData.accountId}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Business Email:</span>
+                      <span className="text-gray-900">{stripeData.accountEmail}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Business Name:</span>
+                      <span className="text-gray-900">{stripeData.accountName}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Account Status */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-3">Account Status</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Charges Enabled:</span>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        stripeData.chargesEnabled 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
+                        {stripeData.chargesEnabled ? 'Yes' : 'No'}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600">Payouts Enabled:</span>
+                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                        stripeData.payoutsEnabled 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-red-100 text-red-700'
+                      }`}>
     </div>
   );
 };
