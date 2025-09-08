@@ -10,6 +10,7 @@ export const useVapiData = (userId: string | undefined) => {
   const [chartData, setChartData] = useState<ChartData | null>(null);
   const [subscriptionData, setSubscriptionData] = useState<SubscriptionData | null>(null);
   const [calendarData, setCalendarData] = useState<CalendarSyncData | null>(null);
+  const [stripeData, setStripeData] = useState<StripeIntegrationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useRealData, setUseRealData] = useState(false);
@@ -21,6 +22,7 @@ export const useVapiData = (userId: string | undefined) => {
     chartData: ChartData | null;
     subscriptionData: SubscriptionData | null;
     calendarData: CalendarSyncData | null;
+    stripeData: StripeIntegrationData | null;
     lastFetch: number;
   }>({
     callData: [],
@@ -28,6 +30,7 @@ export const useVapiData = (userId: string | undefined) => {
     chartData: null,
     subscriptionData: null,
     calendarData: null,
+    stripeData: null,
     lastFetch: 0
   });
 
@@ -102,6 +105,21 @@ export const useVapiData = (userId: string | undefined) => {
       dailyBookingCount: Math.floor(Math.random() * 15) + 3,
       lastSyncTime: Math.random() > 0.3 ? new Date(Date.now() - Math.random() * 3600000).toISOString() : null,
       error: Math.random() > 0.8 ? 'Sync failed: Calendar permission expired' : null
+    };
+  };
+
+  const generateMockStripeData = (): StripeIntegrationData => {
+    const isConnected = Math.random() > 0.4; // 60% chance of being connected
+    return {
+      isConnected,
+      accountId: isConnected ? `acct_${Math.random().toString(36).substr(2, 16)}` : null,
+      accountEmail: isConnected ? 'business@example.com' : null,
+      accountName: isConnected ? 'Demo Business LLC' : null,
+      chargesEnabled: isConnected ? Math.random() > 0.2 : false,
+      payoutsEnabled: isConnected ? Math.random() > 0.3 : false,
+      detailsSubmitted: isConnected ? Math.random() > 0.1 : false,
+      lastConnected: isConnected ? new Date(Date.now() - Math.random() * 7 * 24 * 3600000).toISOString() : null,
+      error: Math.random() > 0.9 ? 'Account verification required' : null
     };
   };
 
@@ -253,12 +271,14 @@ export const useVapiData = (userId: string | undefined) => {
         const chartAnalytics = generateChartData(calls);
         const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
         const calendar = generateMockCalendarData();
+        const stripe = generateMockStripeData();
 
         setCallData(calls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
         setSubscriptionData(subscription);
         setCalendarData(calendar);
+        setStripeData(stripe);
         
         // Update cache
         setDataCache({
@@ -267,6 +287,7 @@ export const useVapiData = (userId: string | undefined) => {
           chartData: chartAnalytics,
           subscriptionData: subscription,
           calendarData: calendar,
+          stripeData: stripe,
           lastFetch: now
         });
       } catch (err) {
@@ -290,6 +311,7 @@ export const useVapiData = (userId: string | undefined) => {
       const chartAnalytics = generateChartData(mockCalls);
       const subscription = generateMockSubscriptionData(calculatedMetrics.totalCallMinutes);
       const calendar = generateMockCalendarData();
+      const stripe = generateMockStripeData();
 
       setTimeout(() => {
         setCallData(mockCalls);
@@ -297,6 +319,7 @@ export const useVapiData = (userId: string | undefined) => {
         setChartData(chartAnalytics);
         setSubscriptionData(subscription);
         setCalendarData(calendar);
+        setStripeData(stripe);
         
         // Update cache
         setDataCache({
@@ -305,6 +328,7 @@ export const useVapiData = (userId: string | undefined) => {
           chartData: chartAnalytics,
           subscriptionData: subscription,
           calendarData: calendar,
+          stripeData: stripe,
           lastFetch: Date.now()
         });
         setLoading(false);
@@ -405,12 +429,49 @@ export const useVapiData = (userId: string | undefined) => {
     }
   };
 
+  const handleStripeConnect = () => {
+    if (stripeData) {
+      setStripeData({
+        ...stripeData,
+        isConnected: true,
+        accountId: `acct_${Math.random().toString(36).substr(2, 16)}`,
+        accountEmail: 'business@example.com',
+        accountName: 'Demo Business LLC',
+        chargesEnabled: true,
+        payoutsEnabled: true,
+        detailsSubmitted: true,
+        lastConnected: new Date().toISOString(),
+        error: null
+      });
+      console.log('Stripe Connect OAuth initiated');
+    }
+  };
+
+  const handleStripeDisconnect = () => {
+    if (stripeData) {
+      setStripeData({
+        ...stripeData,
+        isConnected: false,
+        accountId: null,
+        accountEmail: null,
+        accountName: null,
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        detailsSubmitted: false,
+        lastConnected: null,
+        error: null
+      });
+      console.log('Stripe account disconnected');
+    }
+  };
+
   return { 
     callData, 
     metrics, 
     chartData, 
     subscriptionData,
     calendarData,
+    stripeData,
     loading, 
     error, 
     refreshData, 
@@ -423,6 +484,8 @@ export const useVapiData = (userId: string | undefined) => {
     handleSelectCalendar,
     handleChangeSyncMode,
     handleToggleConflictCheck,
-    handleSelectTopUpOption
+    handleSelectTopUpOption,
+    handleStripeConnect,
+    handleStripeDisconnect
   };
 };

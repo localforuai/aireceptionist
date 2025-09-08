@@ -146,7 +146,25 @@ const translations = {
     'common.loading': 'Loading...',
     'common.error': 'Error',
     'common.tryAgain': 'Try Again',
-    'common.close': 'Close'
+    'common.close': 'Close',
+    
+    // Stripe Integration
+    'stripe.title': 'Stripe Integration',
+    'stripe.description': 'Connect Stripe to process subscription payments',
+    'stripe.connected': 'Connected',
+    'stripe.notConnected': 'Not Connected',
+    'stripe.connect': 'Connect with Stripe',
+    'stripe.disconnect': 'Disconnect Stripe',
+    'stripe.accountDetails': 'Account Details',
+    'stripe.accountStatus': 'Account Status',
+    'stripe.chargesEnabled': 'Charges Enabled',
+    'stripe.payoutsEnabled': 'Payouts Enabled',
+    'stripe.detailsSubmitted': 'Details Submitted',
+    'stripe.lastConnected': 'Last Connected',
+    'stripe.paymentFeatures': 'Payment Features',
+    'stripe.secureProcessing': 'Secure Payment Processing',
+    'stripe.disconnectWarning': 'Disconnecting Stripe will disable automatic payments and top-ups.',
+    'stripe.confirmDisconnect': 'Confirm Disconnect'
   },
   th: {
     // Header
@@ -285,7 +303,25 @@ const translations = {
     'common.loading': 'กำลังโหลด...',
     'common.error': 'ข้อผิดพลาด',
     'common.tryAgain': 'ลองอีกครั้ง',
-    'common.close': 'ปิด'
+    'common.close': 'ปิด',
+    
+    // Stripe Integration
+    'stripe.title': 'การเชื่อมต่อ Stripe',
+    'stripe.description': 'เชื่อมต่อ Stripe เพื่อประมวลผลการชำระเงินสมาชิก',
+    'stripe.connected': 'เชื่อมต่อแล้ว',
+    'stripe.notConnected': 'ไม่ได้เชื่อมต่อ',
+    'stripe.connect': 'เชื่อมต่อกับ Stripe',
+    'stripe.disconnect': 'ตัดการเชื่อมต่อ Stripe',
+    'stripe.accountDetails': 'รายละเอียดบัญชี',
+    'stripe.accountStatus': 'สถานะบัญชี',
+    'stripe.chargesEnabled': 'เปิดใช้การเรียกเก็บเงิน',
+    'stripe.payoutsEnabled': 'เปิดใช้การจ่ายเงิน',
+    'stripe.detailsSubmitted': 'ส่งรายละเอียดแล้ว',
+    'stripe.lastConnected': 'เชื่อมต่อล่าสุด',
+    'stripe.paymentFeatures': 'คุณสมบัติการชำระเงิน',
+    'stripe.secureProcessing': 'การประมวลผลการชำระเงินที่ปลอดภัย',
+    'stripe.disconnectWarning': 'การตัดการเชื่อมต่อ Stripe จะปิดใช้งานการชำระเงินอัตโนมัติและการเติมเงิน',
+    'stripe.confirmDisconnect': 'ยืนยันการตัดการเชื่อมต่อ'
   }
 };
 

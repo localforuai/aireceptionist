@@ -56,3 +56,14 @@ export interface CalendarSyncData {
   lastSyncTime: string | null;
   error: string | null;
 }
+export interface StripeIntegrationData {
+  isConnected: boolean;
+  accountId: string | null;
+  accountEmail: string | null;
+  accountName: string | null;
+  chargesEnabled: boolean;
+  payoutsEnabled: boolean;
+  detailsSubmitted: boolean;
+  lastConnected: string | null;
+  error: string | null;
+}
