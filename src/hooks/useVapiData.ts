@@ -3,12 +3,10 @@ import { useLocation } from 'react-router-dom';
 import { CallData, DashboardMetrics, ChartData, SubscriptionData, CalendarSyncData } from '../types';
 import { backendApi } from '../services/backendApi';
 import { useNotificationContext } from '../contexts/NotificationContext';
-import { useLanguage } from '../contexts/LanguageContext';
 
 export const useVapiData = (userId: string | undefined) => {
   const location = useLocation();
   const { addNotification } = useNotificationContext();
-  const { t } = useLanguage();
   const [callData, setCallData] = useState<CallData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -197,7 +195,7 @@ export const useVapiData = (userId: string | undefined) => {
   };
 
   // Check for low minutes and show notification
-  const checkLowMinutesNotification = (subscription: SubscriptionData) => {
+  const checkLowMinutesNotification = (subscription: SubscriptionData, t: (key: string) => string) => {
     const now = Date.now();
     const oneHourAgo = now - (60 * 60 * 1000); // 1 hour in milliseconds
     
@@ -298,8 +296,6 @@ export const useVapiData = (userId: string | undefined) => {
         const calendar = generateMockCalendarData();
         const stripe = generateMockStripeData();
 
-        // Check for low minutes notification
-        checkLowMinutesNotification(subscription);
 
         setCallData(calls);
         setMetrics(calculatedMetrics);
@@ -341,8 +337,6 @@ export const useVapiData = (userId: string | undefined) => {
       const calendar = generateMockCalendarData();
       const stripe = generateMockStripeData();
 
-      // Check for low minutes notification
-      checkLowMinutesNotification(subscription);
 
       setTimeout(() => {
         setCallData(mockCalls);
@@ -371,7 +365,7 @@ export const useVapiData = (userId: string | undefined) => {
     setUseRealData(!useRealData);
   };
 
-  const handleTopUp = () => {
+  const handleTopUp = (t?: (key: string) => string) => {
     if (subscriptionData) {
       const selectedOption = subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption];
       const updatedSubscription = {
@@ -380,13 +374,15 @@ export const useVapiData = (userId: string | undefined) => {
       };
       setSubscriptionData(updatedSubscription);
       
-      // Show success notification
-      addNotification({
-        type: 'success',
-        title: 'Top-up Successful!',
-        message: `Added ${selectedOption.minutes} ${t('metrics.minutes')} to your account. You now have ${updatedSubscription.remainingMinutes} ${t('metrics.minutes')} remaining.`,
-        dismissible: true
-      });
+      // Show success notification if translation function is available
+      if (t) {
+        addNotification({
+          type: 'success',
+          title: 'Top-up Successful!',
+          message: `Added ${selectedOption.minutes} ${t('metrics.minutes')} to your account. You now have ${updatedSubscription.remainingMinutes} ${t('metrics.minutes')} remaining.`,
+          dismissible: true
+        });
+      }
       
       // In a real app, this would trigger Stripe payment flow
       console.log('Top-up purchased:', selectedOption.minutes, 'minutes for $' + selectedOption.price);
@@ -526,6 +522,7 @@ export const useVapiData = (userId: string | undefined) => {
     handleToggleConflictCheck,
     handleSelectTopUpOption,
     handleStripeConnect,
-    handleStripeDisconnect
+    handleStripeDisconnect,
+    checkLowMinutesNotification
   };
 };

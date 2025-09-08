@@ -16,8 +16,16 @@ export const OverviewPage: React.FC = () => {
     loading, 
     handleTopUp, 
     handleToggleAutoTopUp,
-    handleSelectTopUpOption
+    handleSelectTopUpOption,
+    checkLowMinutesNotification
   } = useVapiData(user?.id);
+
+  // Check for low minutes notification when subscription data changes
+  React.useEffect(() => {
+    if (subscriptionData && !loading) {
+      checkLowMinutesNotification(subscriptionData, t);
+    }
+  }, [subscriptionData, loading, checkLowMinutesNotification, t]);
 
   if (loading) {
     return (
@@ -171,7 +179,7 @@ export const OverviewPage: React.FC = () => {
             </div>
             <div className="flex gap-1">
               <button
-                onClick={handleTopUp}
+                onClick={() => handleTopUp(t)}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium py-1 px-2 rounded transition-colors"
               >
                 {t('subscription.buyMinutes').replace('mins', `${subscriptionData.topUpOptions[subscriptionData.selectedTopUpOption].minutes}`)}
