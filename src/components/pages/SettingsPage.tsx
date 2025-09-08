@@ -474,6 +474,67 @@ export const SettingsPage: React.FC = () => {
                           ? 'bg-green-100 text-green-700' 
                           : 'bg-red-100 text-red-700'
                       }`}>
+                        {stripeData.payoutsEnabled ? 'Yes' : 'No'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Disconnect Button */}
+                {!showStripeDisconnectConfirm ? (
+                  <button
+                    onClick={() => setShowStripeDisconnectConfirm(true)}
+                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                  >
+                    Disconnect Stripe
+                  </button>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-3">
+                      <div className="flex items-start">
+                        <ExclamationTriangleIcon className="h-4 w-4 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
+                        <p className="text-sm text-yellow-700">
+                          Disconnecting Stripe will disable subscription billing and payment processing.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleStripeDisconnect();
+                        setShowStripeDisconnectConfirm(false);
+                      }}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                    >
+                      Confirm Disconnect
+                    </button>
+                    <button
+                      onClick={() => setShowStripeDisconnectConfirm(false)}
+                      className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg transition-colors"
+                    >
+                      {t('subscription.cancel')}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Connection Info */}
+          <div className="space-y-4">
+            {stripeData?.isConnected && (
+              <div className="bg-gray-50 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-900">Last Connected</span>
+                  <ClockIcon className="w-4 h-4 text-gray-400" />
+                </div>
+                <p className="text-sm text-gray-600">
+                  {stripeData.lastConnected ? new Date(stripeData.lastConnected).toLocaleDateString() : 'Unknown'}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
