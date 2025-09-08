@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { CallData, DashboardMetrics, ChartData, SubscriptionData, CalendarSyncData } from '../types';
 import { backendApi } from '../services/backendApi';
+import { useNotificationContext } from '../contexts/NotificationContext';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const useVapiData = (userId: string | undefined) => {
   const location = useLocation();
+  const { addNotification } = useNotificationContext();
+  const { t } = useLanguage();
   const [callData, setCallData] = useState<CallData[]>([]);
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [chartData, setChartData] = useState<ChartData | null>(null);
@@ -14,6 +18,7 @@ export const useVapiData = (userId: string | undefined) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [useRealData, setUseRealData] = useState(false);
+  const [lastNotificationCheck, setLastNotificationCheck] = useState<number>(0);
   
   // Create a singleton instance to share data across routes
   const [dataCache, setDataCache] = useState<{
@@ -191,6 +196,26 @@ export const useVapiData = (userId: string | undefined) => {
     return { endReasons, assistantDurations, successDistribution, dailyCallVolume };
   };
 
+  // Check for low minutes and show notification
+  const checkLowMinutesNotification = (subscription: SubscriptionData) => {
+    const now = Date.now();
+    const oneHourAgo = now - (60 * 60 * 1000); // 1 hour in milliseconds
+    
+    // Only show notification once per hour to avoid spam
+    if (subscription.remainingMinutes <= 50 && lastNotificationCheck < oneHourAgo) {
+      addNotification({
+        type: 'warning',
+        title: t('subscription.runningLow'),
+        message: `You have ${subscription.remainingMinutes} ${t('metrics.minutes')} remaining. Consider purchasing more minutes to avoid service interruption.`,
+        actionText: `${t('subscription.buyMinutes').replace('mins', `${subscription.topUpOptions[subscription.selectedTopUpOption].minutes} ${t('metrics.minutes')}`)}`,
+        onAction: handleTopUp,
+        persistent: true, // Keep notification until manually dismissed
+        dismissible: true
+      });
+      setLastNotificationCheck(now);
+    }
+  };
+
   useEffect(() => {
     if (!userId) return;
     
@@ -273,6 +298,9 @@ export const useVapiData = (userId: string | undefined) => {
         const calendar = generateMockCalendarData();
         const stripe = generateMockStripeData();
 
+        // Check for low minutes notification
+        checkLowMinutesNotification(subscription);
+
         setCallData(calls);
         setMetrics(calculatedMetrics);
         setChartData(chartAnalytics);
@@ -313,6 +341,9 @@ export const useVapiData = (userId: string | undefined) => {
       const calendar = generateMockCalendarData();
       const stripe = generateMockStripeData();
 
+      // Check for low minutes notification
+      checkLowMinutesNotification(subscription);
+
       setTimeout(() => {
         setCallData(mockCalls);
         setMetrics(calculatedMetrics);
@@ -348,6 +379,15 @@ export const useVapiData = (userId: string | undefined) => {
         remainingMinutes: subscriptionData.remainingMinutes + selectedOption.minutes
       };
       setSubscriptionData(updatedSubscription);
+      
+      // Show success notification
+      addNotification({
+        type: 'success',
+        title: 'Top-up Successful!',
+        message: `Added ${selectedOption.minutes} ${t('metrics.minutes')} to your account. You now have ${updatedSubscription.remainingMinutes} ${t('metrics.minutes')} remaining.`,
+        dismissible: true
+      });
+      
       // In a real app, this would trigger Stripe payment flow
       console.log('Top-up purchased:', selectedOption.minutes, 'minutes for $' + selectedOption.price);
     }

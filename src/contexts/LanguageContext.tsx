@@ -45,6 +45,8 @@ const translations = {
     'subscription.autoTopUp': 'Auto Top-Up',
     'subscription.autoTopUpDesc': 'Auto-buy mins for $ when low.',
     'subscription.runningLow': 'Running low on minutes!',
+    'subscription.lowMinutesWarning': 'Low Minutes Warning',
+    'subscription.lowMinutesMessage': 'You have {minutes} minutes remaining. Consider purchasing more minutes to avoid service interruption.',
     
     // Google Calendar
     'calendar.title': 'Google Calendar',
@@ -202,6 +204,8 @@ const translations = {
     'subscription.autoTopUp': 'เติมอัตโนมัติ',
     'subscription.autoTopUpDesc': 'ซื้อ นาที ในราคา $ เมื่อเหลือน้อย',
     'subscription.runningLow': 'นาทีเหลือน้อย!',
+    'subscription.lowMinutesWarning': 'คำเตือนนาทีเหลือน้อย',
+    'subscription.lowMinutesMessage': 'คุณมีนาทีเหลือ {minutes} นาที กรุณาพิจารณาซื้อนาทีเพิ่มเติมเพื่อหลีกเลี่ยงการหยุดบริการ',
     
     // Google Calendar
     'calendar.title': 'Google ปฏิทิน',

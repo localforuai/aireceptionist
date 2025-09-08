@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { AuthContainer } from './components/auth/AuthContainer';
 import { DashboardLayout } from './components/layout/DashboardLayout';
 import { OverviewPage } from './components/pages/OverviewPage';
@@ -27,29 +28,31 @@ function App() {
 
   return (
     <LanguageProvider>
-      <Router>
-        <div className="App">
-          <Routes>
-            {user ? (
-              <>
-                <Route path="/dashboard" element={<DashboardLayout />}>
-                  <Route index element={<OverviewPage />} />
-                  <Route path="calls" element={<CallsPage />} />
-                  <Route path="bookings" element={<BookingsPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-                </Route>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </>
-            ) : (
-              <>
-                <Route path="/auth" element={<AuthContainer />} />
-                <Route path="*" element={<Navigate to="/auth" replace />} />
-              </>
-            )}
-          </Routes>
-        </div>
-      </Router>
+      <NotificationProvider>
+        <Router>
+          <div className="App">
+            <Routes>
+              {user ? (
+                <>
+                  <Route path="/dashboard" element={<DashboardLayout />}>
+                    <Route index element={<OverviewPage />} />
+                    <Route path="calls" element={<CallsPage />} />
+                    <Route path="bookings" element={<BookingsPage />} />
+                    <Route path="settings" element={<SettingsPage />} />
+                  </Route>
+                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/auth" element={<AuthContainer />} />
+                  <Route path="*" element={<Navigate to="/auth" replace />} />
+                </>
+              )}
+            </Routes>
+          </div>
+        </Router>
+      </NotificationProvider>
     </LanguageProvider>
   );
 }

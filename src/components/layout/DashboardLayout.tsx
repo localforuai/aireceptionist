@@ -2,6 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { DashboardHeader } from './DashboardHeader';
 import { NavigationTabs } from './NavigationTabs';
+import { NotificationContainer } from '../NotificationContainer';
 
 export const DashboardLayout: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ export const DashboardLayout: React.FC = () => {
       
       <main className="flex-1 overflow-hidden px-2 sm:px-4 py-2 sm:py-4">
         <div className="h-full max-w-7xl mx-auto">
+          <NotificationContainer />
           <Outlet />
         </div>
       </main>
